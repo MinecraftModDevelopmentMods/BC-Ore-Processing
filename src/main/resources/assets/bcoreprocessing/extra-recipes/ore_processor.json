@@ -1,0 +1,9 @@
+[
+  {
+    "input_stack": { "name": "cobblestone" },
+    "ticks": 10,
+    "output_fluids": [
+      { "name": "gaseous_lava", "quantity": 100 }
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+[{
+  "modid": "${modid}",
+  "name": "${modname}",
+  "description": "Ore processing... BC style!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Face_of_Cat"],
+  "credits": "The Forge, FML guys and my wife.",
+  "logoFile": "",
+  "screenshots": [],
+  "requiredMods": [ "forgelin" ],
+  "dependencies": [ "forgelin" ]
+}]
