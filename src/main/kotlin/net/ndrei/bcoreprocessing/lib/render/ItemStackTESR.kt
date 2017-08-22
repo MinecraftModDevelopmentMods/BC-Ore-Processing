@@ -19,10 +19,10 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
         this.rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE)
 
         GlStateManager.enableRescaleNormal()
-        GlStateManager.alphaFunc(516, 0.1f)
+        // GlStateManager.alphaFunc(516, 0.1f)
         GlStateManager.enableBlend()
         // RenderHelper.enableStandardItemLighting()
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
         GlStateManager.pushMatrix()
         val ibakedmodel = Minecraft.getMinecraft().renderItem.getItemModelWithOverrides(stack, te.world, null)
 
@@ -36,6 +36,7 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
         GlStateManager.popMatrix()
         GlStateManager.disableRescaleNormal()
         GlStateManager.disableBlend()
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
 
         this.rendererDispatcher.renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap()
     }

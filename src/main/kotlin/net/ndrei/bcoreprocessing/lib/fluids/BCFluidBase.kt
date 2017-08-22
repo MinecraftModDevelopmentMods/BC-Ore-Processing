@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.fluids
+package net.ndrei.bcoreprocessing.lib.fluids
 
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.TextFormatting

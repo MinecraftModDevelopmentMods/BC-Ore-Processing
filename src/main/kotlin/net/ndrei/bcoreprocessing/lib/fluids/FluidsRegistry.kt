@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.fluids
+package net.ndrei.bcoreprocessing.lib.fluids
 
 import buildcraft.api.fuels.BuildcraftFuelRegistry
 import net.minecraft.block.Block

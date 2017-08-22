@@ -7,7 +7,8 @@ import net.ndrei.teslacorelib.utils.copyWithSize
 import net.ndrei.teslacorelib.utils.equalsIgnoreSize
 
 class OreProcessorRecipe(private val input: ItemStack, private val outputs: Array<FluidStack>, private val ticks: Int): IOreProcessorRecipe {
-    override fun isInput(stack: ItemStack) = this.input.equalsIgnoreSize(stack) && (this.input.count <= stack.count)
+    override fun isInput(stack: ItemStack, ignoreSize: Boolean) =
+        this.input.equalsIgnoreSize(stack) && (ignoreSize || (this.input.count <= stack.count))
     override fun getProcessingTicks() = this.ticks
     override fun getPossibleInputs() = arrayOf(this.input.copy())
     override fun getTotalOutput() = this.outputs
@@ -15,7 +16,7 @@ class OreProcessorRecipe(private val input: ItemStack, private val outputs: Arra
         .toTypedArray()
 
     override fun processInput(stack: ItemStack): ItemStack {
-        if (!this.isInput(stack)) {
+        if (!this.isInput(stack, false)) {
             throw Exception("Invalid input item stack: $stack.")
         }
 

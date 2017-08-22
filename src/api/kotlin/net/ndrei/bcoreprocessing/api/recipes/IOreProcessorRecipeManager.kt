@@ -12,5 +12,5 @@ interface IOreProcessorRecipeManager {
         this.registerRecipe(this.createRecipe(input, output, ticks))
     }
 
-    fun findFirstRecipe(input: ItemStack): IOreProcessorRecipe?
+    fun findFirstRecipe(input: ItemStack, ignoreSize: Boolean): IOreProcessorRecipe?
 }

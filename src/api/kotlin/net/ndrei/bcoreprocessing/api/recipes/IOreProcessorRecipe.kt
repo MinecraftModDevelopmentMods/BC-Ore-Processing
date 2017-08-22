@@ -11,9 +11,10 @@ interface IOreProcessorRecipe {
      * Tests if an ItemStack can be used as an input for this recipe.
      *
      * @param stack the possible input ItemStack
+     * @param ignoreSize if true, only test the item and not also if there are enough items for the recipe
      * @return 'true' if the ItemStack is a possible input
      */
-    fun isInput(stack: ItemStack): Boolean
+    fun isInput(stack: ItemStack, ignoreSize: Boolean): Boolean
 
     /**
      * Modifies the input ItemStack by taking out the items required by this recipe

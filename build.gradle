@@ -79,6 +79,8 @@ for (set in sourceSets) {
 configurations {
     compile.extendsFrom exportedCompile
     deployerJars
+
+    all { resolutionStrategy.cacheChangingModulesFor 0, 'seconds' }
 }
 
 repositories {
@@ -96,7 +98,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.kotlin_version}"
     compile "net.shadowfacts:Forgelin:${project.forgelin_version}"
 
-    compile ("net.ndrei:tesla-core-lib:${project.minecraft_version}-${project.teslacorelib_version}:deobf") { changing = true }
+    compile ("net.ndrei:tesla-core-lib:${project.minecraft_version}-${project.teslacorelib_version}") { changing = true }
 
     deobfCompile "mezz.jei:jei_${project.minecraft_version}:${project.jei_version}:api"
     runtime "mezz.jei:jei_${project.minecraft_version}:${project.jei_version}"

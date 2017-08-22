@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.fluids
+package net.ndrei.bcoreprocessing.lib.fluids
 
 enum class FluidTemperature {
     COOL,

@@ -55,7 +55,7 @@ object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
         val color = fluid.getColor()
         val still = fluid.getStill()
 //        val flowing = fluid.getFlowing()
-        var stillSprite: TextureAtlasSprite =
+        val stillSprite: TextureAtlasSprite =
             (if (still == null) null else Minecraft.getMinecraft().textureMapBlocks.getTextureExtry(still.toString()))
                 ?: Minecraft.getMinecraft().textureMapBlocks.missingSprite
         val flowingSprite = /*(flowing == null) ? null : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(flowing.toString());
@@ -91,6 +91,11 @@ object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
         vertexbuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
         vertexbuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
         vertexbuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+
+        vertexbuffer.pos(15.9, bottom + 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexbuffer.pos(15.9, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexbuffer.pos(0.1, bottom + 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexbuffer.pos(0.1, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
 
         GlStateManager.color((color shr 16 and 0xFF) / 255.0f, (color shr 8 and 0xFF) / 255.0f, (color and 0xFF) / 255.0f, (color ushr 24 and 0xFF) / 255.0f)
 
