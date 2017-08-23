@@ -24,7 +24,7 @@ class BCFluidBase(val baseName: String, still: ResourceLocation, flowing: Resour
     }
 
     override fun getUnlocalizedName(): String {
-        return "Molten ${this.baseName.replace("_", " ").capitalize()} (${when (this.fluidTemperature) {
+        return "${if (this.isGaseous) "" else "Molten "}${this.baseName.split("_").map { it.capitalize() }.joinToString(" ")} (${when (this.fluidTemperature) {
             FluidTemperature.COOL -> TextFormatting.AQUA
             FluidTemperature.HOT -> TextFormatting.GOLD
             FluidTemperature.SEARING -> TextFormatting.RED
