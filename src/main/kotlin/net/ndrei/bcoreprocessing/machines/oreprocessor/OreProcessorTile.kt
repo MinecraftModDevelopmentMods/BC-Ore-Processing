@@ -120,15 +120,15 @@ class OreProcessorTile
 
             val recipe = OreProcessorRecipeManager.findFirstRecipe(this.currentInput, false) ?: return
             val fluids = recipe.getOutputForTick(this.currentTick)
-            if (!fluids.isEmpty()) {
-                val fluid1 = fluids[0]
-                val f1ok = (fluid1.amount == 0)|| (this.output1.fill(fluid1, false) == fluid1.amount)
+            if ((fluids.first != null) || (fluids.second != null)) {
+                val fluid1 = fluids.first
+                val f1ok = (fluid1 == null) || (fluid1.amount == 0) || (this.output1.fill(fluid1, false) == fluid1.amount)
 
-                val fluid2 = if (fluids.size > 1) fluids[1] else null
+                val fluid2 = fluids.second
                 val f2ok = (fluid2 == null) || (fluid2.amount == 0) || (this.output2.fill(fluid2, false) == fluid2.amount)
 
                 if (f1ok && f2ok) {
-                    if (fluid1.amount > 0) {
+                    if ((fluid1 != null) && (fluid1.amount > 0)) {
                         this.output1.fill(fluid1, true)
                     }
 

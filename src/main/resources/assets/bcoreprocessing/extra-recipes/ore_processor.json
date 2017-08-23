@@ -2,16 +2,16 @@
   {
     "input_stack": { "name": "cobblestone" },
     "ticks": 10,
-    "output_fluids": [
-      { "name": "bcop-gaseous_lava-searing", "quantity": 500 }
-    ]
+    "output_fluids": {
+      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 500 }
+    }
   },
   {
     "input_stack": { "ore": "oreIron" },
     "ticks": 10,
-    "output_fluids": [
-      { "name": "bcop-iron-searing", "quantity": 1000 },
-      { "name": "bcop-gaseous_lava-searing", "quantity": 100 }
-    ]
+    "output_fluids": {
+      "first": { "name": "bcop-iron-searing", "quantity": 1000 },
+      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 100 }
+    }
   }
 ]

@@ -28,9 +28,9 @@ interface IOreProcessorRecipe {
      * Returns the amounts of fluid generated for the current tick
      *
      * @param tick the current tick in processing this recipe (range 0 .. processingTicks)
-     * @return generated fluids. Only the first 2 fluids will be handled. If there are more than 2 fluids the rest will be ignored.
+     * @return generated fluids. First fluid will be placed in bottom tank, second fluid will be placed in top tank.
      */
-    fun getOutputForTick(tick: Int): Array<FluidStack>
+    fun getOutputForTick(tick: Int): Pair<FluidStack?, FluidStack?>
 
     /**
      * Gets the total number of ticks this recipe needs to be processed for
@@ -47,5 +47,5 @@ interface IOreProcessorRecipe {
      * Gets a list of all the outputs of this recipe.
      * This is only used for display purposes and JEI integration
      */
-    fun getTotalOutput(): Array<FluidStack>
+    fun getTotalOutput(): Pair<FluidStack?, FluidStack?>
 }

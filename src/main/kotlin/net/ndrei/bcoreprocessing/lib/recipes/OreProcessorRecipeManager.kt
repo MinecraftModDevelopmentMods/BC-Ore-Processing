@@ -22,7 +22,7 @@ object OreProcessorRecipeManager : IOreProcessorRecipeManager, IRegistryHandler 
         this.recipes.add(recipe)
     }
 
-    override fun createRecipe(input: ItemStack, output: Array<FluidStack>, ticks: Int) =
+    override fun createRecipe(input: ItemStack, output: Pair<FluidStack?, FluidStack?>, ticks: Int) =
         OreProcessorRecipe(input, output, ticks)
 
     override fun findFirstRecipe(input: ItemStack, ignoreSize: Boolean) =
@@ -35,11 +35,12 @@ object OreProcessorRecipeManager : IOreProcessorRecipeManager, IRegistryHandler 
                 val ticks = JsonUtils.getInt(it, "ticks", 0)
                 if (ticks > 0) {
                     val rawFluids = it.get("output_fluids")
-                    if (rawFluids.isJsonArray) {
-                        val fluids = rawFluids.asJsonArray.mapNotNull {
-                            if (it.isJsonObject) it.asJsonObject.readFluidStack() else null
-                        }.toTypedArray()
-                        if (fluids.isNotEmpty()) {
+                    if (rawFluids.isJsonObject) {
+                        val fluids = Pair(
+                            rawFluids.asJsonObject.readFluidStack("first"),
+                            rawFluids.asJsonObject.readFluidStack("second")
+                        )
+                        if ((fluids.first != null) || (fluids.second != null)) {
                             stacks.forEach {
                                 this.registerSimpleRecipe(it, fluids, ticks)
                             }
