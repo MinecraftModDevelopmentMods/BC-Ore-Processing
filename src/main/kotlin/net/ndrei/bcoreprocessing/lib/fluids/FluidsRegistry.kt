@@ -1,12 +1,14 @@
 package net.ndrei.bcoreprocessing.lib.fluids
 
 import buildcraft.api.fuels.BuildcraftFuelRegistry
+import buildcraft.api.recipes.BuildcraftRecipeRegistry
 import net.minecraft.block.Block
 import net.minecraft.util.JsonUtils
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.TextureStitchEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fluids.FluidRegistry
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.common.discovery.ASMDataTable
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.registries.IForgeRegistry
@@ -66,7 +68,16 @@ object FluidsRegistry: IRegistryHandler {
                         FluidRegistry.registerFluid(it)
                         FluidRegistry.addBucketForFluid(it)
                     }
+            }.toTypedArray().also {
+            val registry = BuildcraftRecipeRegistry.refineryRecipes
+            if (registry != null) {
+                (1 until it.size).forEach { i ->
+                    val cold = FluidStack(it[i - 1], 100)
+                    val hot = FluidStack(it[i], 100)
+                    registry.addCoolableRecipe(hot, cold, i, i - 1)
+                    registry.addHeatableRecipe(cold, hot, i - 1, i)
+                }
             }
-            .toTypedArray()
+        }
     }
 }
