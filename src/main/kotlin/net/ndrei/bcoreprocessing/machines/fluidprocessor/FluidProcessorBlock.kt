@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.machines.oreprocessor
+package net.ndrei.bcoreprocessing.machines.fluidprocessor
 
 import net.minecraft.block.state.IBlockState
 import net.minecraft.util.BlockRenderLayer
@@ -8,8 +8,8 @@ import net.ndrei.teslacorelib.annotations.AutoRegisterBlock
 import net.ndrei.teslacorelib.blocks.OrientedBlock
 
 @AutoRegisterBlock
-object OreProcessorBlock
-    : OrientedBlock<OreProcessorTile>(MOD_ID, BCOreProcessing.creativeTab, "ore_processor", OreProcessorTile::class.java) {
+object FluidProcessorBlock
+    : OrientedBlock<FluidProcessorTile>(MOD_ID, BCOreProcessing.creativeTab, "fluid_processor", FluidProcessorTile::class.java) {
 
     override fun getBlockLayer() = BlockRenderLayer.TRANSLUCENT
     override fun isOpaqueCube(state: IBlockState?) = false

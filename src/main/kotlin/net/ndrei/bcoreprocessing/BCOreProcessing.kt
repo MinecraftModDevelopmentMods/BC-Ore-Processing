@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.ndrei.bcoreprocessing.api.recipes.OreProcessingRecipes
+import net.ndrei.bcoreprocessing.lib.recipes.FluidProcessorRecipeManager
 import net.ndrei.bcoreprocessing.lib.recipes.OreProcessorRecipeManager
 import net.ndrei.bcoreprocessing.machines.oreprocessor.OreProcessorBlock
 import net.ndrei.teslacorelib.config.ModConfigHandler
@@ -36,7 +37,7 @@ object BCOreProcessing {
         // Use forge universal bucket
         FluidRegistry.enableUniversalBucket()
 
-        OreProcessingRecipes.init(OreProcessorRecipeManager)
+        OreProcessingRecipes.init(OreProcessorRecipeManager, FluidProcessorRecipeManager)
     }
 
     @Mod.EventHandler

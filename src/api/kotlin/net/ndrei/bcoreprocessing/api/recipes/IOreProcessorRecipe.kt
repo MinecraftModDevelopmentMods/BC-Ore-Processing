@@ -44,7 +44,7 @@ interface IOreProcessorRecipe {
     fun getPossibleInputs(): Array<ItemStack>
 
     /**
-     * Gets a list of all the outputs of this recipe.
+     * Gets all the outputs of this recipe.
      * This is only used for display purposes and JEI integration
      */
     fun getTotalOutput(): Pair<FluidStack?, FluidStack?>

@@ -50,4 +50,6 @@ object OreProcessorRecipeManager : IOreProcessorRecipeManager, IRegistryHandler 
             }
         }
     }
+
+    val allRecipes get() = this.recipes.toList()
 }
