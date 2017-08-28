@@ -11,7 +11,7 @@
     "ticks": 20,
     "output_fluids": {
       "first": { "name": "bcop-iron-searing", "quantity": 1000 },
-      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 100 }
+      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 125 }
     }
   },
   {
@@ -19,7 +19,7 @@
     "ticks": 20,
     "output_fluids": {
       "first": { "name": "bcop-gold-searing", "quantity": 1000 },
-      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 100 }
+      "second": { "name": "bcop-gaseous_lava-searing", "quantity": 125 }
     }
   }
 ]

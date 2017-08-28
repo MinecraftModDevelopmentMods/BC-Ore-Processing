@@ -116,8 +116,6 @@ class OreProcessorTile
 
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
         if (!this.currentInput.isEmpty && (this.battery.stored >= power)) {
-            var processed = false
-
             val recipe = OreProcessorRecipeManager.findFirstRecipe(this.currentInput, false) ?: return
             val fluids = recipe.getOutputForTick(this.currentTick)
             if ((fluids.first != null) || (fluids.second != null)) {
@@ -127,27 +125,27 @@ class OreProcessorTile
                 val fluid2 = fluids.second
                 val f2ok = (fluid2 == null) || (fluid2.amount == 0) || (this.output2.fill(fluid2, false) == fluid2.amount)
 
-                if (f1ok && f2ok) {
-                    if ((fluid1 != null) && (fluid1.amount > 0)) {
-                        this.output1.fill(fluid1, true)
-                    }
-
-                    if ((fluid2 != null) && (fluid2.amount > 0)) {
-                        this.output2.fill(fluid2, true)
-                    }
-
-                    processed = true
-                }
-            }
-            if (processed) {
-                this.currentTick++
-                if (this.currentTick >= recipe.getProcessingTicks()) {
-                    this.currentInput = ItemStack.EMPTY
-                    this.currentTick = 0
+                if (!f1ok || !f2ok) {
+                    // something could not be processed, skip tick
+                    return
                 }
 
-                this.battery.extractPower(power)
+                if ((fluid1 != null) && (fluid1.amount > 0)) {
+                    this.output1.fill(fluid1, true)
+                }
+
+                if ((fluid2 != null) && (fluid2.amount > 0)) {
+                    this.output2.fill(fluid2, true)
+                }
             }
+
+            this.currentTick++
+            if (this.currentTick >= recipe.getProcessingTicks()) {
+                this.currentInput = ItemStack.EMPTY
+                this.currentTick = 0
+            }
+
+            this.battery.extractPower(power)
         }
     }
 }
