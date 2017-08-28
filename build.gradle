@@ -51,6 +51,7 @@ minecraft {
     replace '@FORGELIN-VERSION@', project.forgelin_version
     replace '@FORGE-VERSION@', project.forge_version
     replace '@BC-VERSION@', project.bc_version
+    replace '@TESLA-CORE-LIB-VERSION@', project.teslacorelib_version
 
     replaceIn 'constants.kt'
 }
