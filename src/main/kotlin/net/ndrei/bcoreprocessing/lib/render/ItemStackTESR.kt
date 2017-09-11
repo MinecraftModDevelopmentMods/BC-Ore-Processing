@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
 
 object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
-    override fun render(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int, alpha: Float) {
+    override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
         val stack = (te as? IItemStackHolder)?.getItemStack() ?: ItemStack.EMPTY
         if ((te == null) || stack.isEmpty) {
             return;
@@ -28,7 +28,7 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
 
         GlStateManager.translate(x + .5f, y + .25f, z + .5f)
         GlStateManager.scale(1.5f, 1.5f, 1.5f)
-        GlStateManager.color(1.0f, 1.0f, 1.0f, .75f)
+        GlStateManager.color(1.0f, 1.0f, 1.0f, .15f)
 
         val transformedModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false)
         Minecraft.getMinecraft().renderItem.renderItem(stack, transformedModel)

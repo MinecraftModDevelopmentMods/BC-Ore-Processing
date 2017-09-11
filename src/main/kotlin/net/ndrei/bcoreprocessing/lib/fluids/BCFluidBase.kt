@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.TextFormatting
 import net.minecraftforge.fluids.Fluid
 
-class BCFluidBase(val baseName: String, still: ResourceLocation, flowing: ResourceLocation, private val fluidColor: Int, val fluidTemperature: FluidTemperature, maxLuminosity: Int, density: Int, viscosity: Int, isGaseous: Boolean = false)
+class BCFluidBase(private val baseName: String, still: ResourceLocation, flowing: ResourceLocation, private val fluidColor: Int, val fluidTemperature: FluidTemperature, maxLuminosity: Int, density: Int, viscosity: Int, isGaseous: Boolean = false)
     : Fluid("bcop-$baseName-${fluidTemperature.name.toLowerCase()}", still, flowing) {
     init {
         this.setLuminosity(when (this.fluidTemperature) {
@@ -24,7 +24,7 @@ class BCFluidBase(val baseName: String, still: ResourceLocation, flowing: Resour
     }
 
     override fun getUnlocalizedName(): String {
-        return "${if (this.isGaseous) "" else "Molten "}${this.baseName.split("_").map { it.capitalize() }.joinToString(" ")} (${when (this.fluidTemperature) {
+        return "${if (this.isGaseous) "" else "Molten "}${this.baseName.split("_").joinToString(" ") { it.capitalize() }} (${when (this.fluidTemperature) {
             FluidTemperature.COOL -> TextFormatting.AQUA
             FluidTemperature.HOT -> TextFormatting.GOLD
             FluidTemperature.SEARING -> TextFormatting.RED

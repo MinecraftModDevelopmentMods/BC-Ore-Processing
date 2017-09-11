@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.Fluid
 import org.lwjgl.opengl.GL11
 
 object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
-    override fun render(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int, alpha: Float) {
+    override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
         val holder = (te as? IFluidStacksHolder) ?: return
         val stacks = holder.getFluidStacks()
         if (stacks.isEmpty()) {
@@ -58,44 +58,39 @@ object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
         val stillSprite: TextureAtlasSprite =
             (if (still == null) null else Minecraft.getMinecraft().textureMapBlocks.getTextureExtry(still.toString()))
                 ?: Minecraft.getMinecraft().textureMapBlocks.missingSprite
-        val flowingSprite = /*(flowing == null) ? null : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(flowing.toString());
-                if (flowingSprite == null) {
-                    flowingSprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-                }
-                flowingSprite =*/ stillSprite
 
-        val vertexbuffer = Tessellator.getInstance().buffer
-        vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
+        val vertexBuffer = Tessellator.getInstance().buffer
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
-        vertexbuffer.pos(0.1, bottom + 0.1, 0.1).tex(flowingSprite.maxU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + 0.1, 0.1).tex(flowingSprite.maxU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
 
-        vertexbuffer.pos(0.1, bottom + 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + 0.1, 15.9).tex(flowingSprite.minU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(flowingSprite.minU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
 
-        vertexbuffer.pos(0.1, bottom + 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + height - 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
 
-        vertexbuffer.pos(15.9, bottom + 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(flowingSprite.minU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + 0.1, 15.9).tex(flowingSprite.maxU.toDouble(), flowingSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
 
-        vertexbuffer.pos(0.1, bottom + height - 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + height - 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + height - 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
 
-        vertexbuffer.pos(15.9, bottom + 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
-        vertexbuffer.pos(15.9, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
-        vertexbuffer.pos(0.1, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 0.1).tex(stillSprite.maxU.toDouble(), stillSprite.minV.toDouble()).endVertex()
+        vertexBuffer.pos(15.9, bottom + 0.1, 15.9).tex(stillSprite.maxU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 15.9).tex(stillSprite.minU.toDouble(), stillSprite.maxV.toDouble()).endVertex()
+        vertexBuffer.pos(0.1, bottom + 0.1, 0.1).tex(stillSprite.minU.toDouble(), stillSprite.minV.toDouble()).endVertex()
 
         GlStateManager.color((color shr 16 and 0xFF) / 255.0f, (color shr 8 and 0xFF) / 255.0f, (color and 0xFF) / 255.0f, (color ushr 24 and 0xFF) / 255.0f)
 

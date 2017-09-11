@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.lib.jei
+package net.ndrei.bcoreprocessing.integrations.jei
 
 import mezz.jei.api.IModRegistry
 import mezz.jei.api.gui.IDrawable
@@ -6,6 +6,7 @@ import mezz.jei.api.gui.IRecipeLayout
 import mezz.jei.api.ingredients.IIngredients
 import mezz.jei.api.recipe.IRecipeCategoryRegistration
 import mezz.jei.api.recipe.IRecipeWrapper
+import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemStack
 import net.minecraftforge.fluids.FluidStack
 import net.ndrei.bcoreprocessing.api.recipes.IOreProcessorRecipe
@@ -15,6 +16,9 @@ import net.ndrei.bcoreprocessing.machines.oreprocessor.OreProcessorBlock
 
 object OreProcessorCategory
     : BaseCategory<OreProcessorCategory.RecipeWrapper>(OreProcessorBlock) {
+    override fun drawExtras(minecraft: Minecraft?) { }
+    override fun getTooltipStrings(mouseX: Int, mouseY: Int) = mutableListOf<String>()
+    override fun getIcon() = null
 
     private lateinit var fluidOverlay: IDrawable
 
@@ -39,6 +43,9 @@ object OreProcessorCategory
 
     class RecipeWrapper(val recipe: IOreProcessorRecipe)
         : IRecipeWrapper {
+        override fun drawInfo(minecraft: Minecraft?, recipeWidth: Int, recipeHeight: Int, mouseX: Int, mouseY: Int) { }
+        override fun getTooltipStrings(mouseX: Int, mouseY: Int) = mutableListOf<String>()
+        override fun handleClick(minecraft: Minecraft?, mouseX: Int, mouseY: Int, mouseButton: Int) = false
 
         override fun getIngredients(ingredients: IIngredients) {
             ingredients.setInput(ItemStack::class.java, this.recipe.getPossibleInputs().first())

@@ -22,6 +22,14 @@ interface IFluidProcessorRecipe {
     fun processInput(stack: FluidStack): FluidStack?
 
     /**
+     * Returns the amount of fluid required at the current tick
+     *
+     * @param tick the current tick in processing this recipe (range 0 .. processingTicks)
+     * @return required fluids.
+     */
+    fun getInputForTick(tick: Int): FluidStack?
+
+    /**
      * Returns the amounts of items and fluid generated for the current tick
      *
      * @param tick the current tick in processing this recipe (range 0 .. processingTicks)

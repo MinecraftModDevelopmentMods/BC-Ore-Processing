@@ -3,8 +3,8 @@ package net.ndrei.bcoreprocessing.lib.recipes
 import net.minecraft.item.ItemStack
 import net.minecraftforge.fluids.FluidStack
 import net.ndrei.bcoreprocessing.api.recipes.IOreProcessorRecipe
-import net.ndrei.teslacorelib.utils.copyWithSize
-import net.ndrei.teslacorelib.utils.equalsIgnoreSize
+import net.ndrei.bcoreprocessing.lib.copyWithSize
+import net.ndrei.bcoreprocessing.lib.equalsIgnoreSize
 
 class OreProcessorRecipe(private val input: ItemStack, private val outputs: Pair<FluidStack?, FluidStack?>, private val ticks: Int)
     : IOreProcessorRecipe {

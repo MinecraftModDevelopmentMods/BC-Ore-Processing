@@ -1,4 +1,4 @@
-package net.ndrei.bcoreprocessing.lib.jei
+package net.ndrei.bcoreprocessing.integrations.jei
 
 import mezz.jei.api.IGuiHelper
 import mezz.jei.api.IModRegistry

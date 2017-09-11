@@ -7,7 +7,7 @@ buildscript {
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.kotlin_version}"
     }
 }
@@ -51,7 +51,7 @@ minecraft {
     replace '@FORGELIN-VERSION@', project.forgelin_version
     replace '@FORGE-VERSION@', project.forge_version
     replace '@BC-VERSION@', project.bc_version
-    replace '@TESLA-CORE-LIB-VERSION@', project.teslacorelib_version
+    replace '@JEI-VERSION@', project.jei_version
 
     replaceIn 'constants.kt'
 }
@@ -87,7 +87,6 @@ configurations {
 repositories {
     mavenCentral()
     jcenter()
-    maven { name='mine'; url='http://maven.ndrei.net' }
     maven { name='forgelin'; url='http://maven.shadowfacts.net' }
     maven { name='build craft'; url='https://www.mod-buildcraft.com/maven' }
     maven { name='jei'; url="http://dvs1.progwml6.com/files/maven" }
@@ -99,15 +98,21 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.kotlin_version}"
     compile "net.shadowfacts:Forgelin:${project.forgelin_version}"
 
-    compile ("net.ndrei:tesla-core-lib:${project.minecraft_version}-${project.teslacorelib_version}") { changing = true }
-
     deobfCompile "mezz.jei:jei_${project.minecraft_version}:${project.jei_version}:api"
     runtime "mezz.jei:jei_${project.minecraft_version}:${project.jei_version}"
 
 //    hopefully these will be available once released for 1.12
-//    compileOnly "com.mod-buildcraft:buildcraft-api:${project.bc_version}"
-//    runtime "com.mod-buildcraft:buildcraft:${project.bc_version}"
-    compileOnly files("lib/buildcraft-api-${project.bc_version}.jar")
+    if (file("bc-lib/buildcraft-${project.bc_version}.jar").exists() &&
+            file("bc-lib/buildcraft-${project.bc_version}-dev.jar").exists()) {
+        compileOnly files("bc-lib/buildcraft-${project.bc_version}-dev.jar")
+        runtime files("bc-lib/buildcraft-${project.bc_version}.jar")
+    }
+    else {
+        compileOnly "com.mod-buildcraft:buildcraft-api:${project.bc_version}"
+        compileOnly "com.mod-buildcraft:buildcraft-lib:${project.bc_version}"
+        runtime "com.mod-buildcraft:buildcraft:${project.bc_version}"
+        // compileOnly files("lib/buildcraft-api-${project.bc_version}.jar")
+    }
 }
 
 processResources {

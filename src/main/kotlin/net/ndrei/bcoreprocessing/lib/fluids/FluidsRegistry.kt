@@ -2,31 +2,25 @@ package net.ndrei.bcoreprocessing.lib.fluids
 
 import buildcraft.api.fuels.BuildcraftFuelRegistry
 import buildcraft.api.recipes.BuildcraftRecipeRegistry
-import net.minecraft.block.Block
 import net.minecraft.util.JsonUtils
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.TextureStitchEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
-import net.minecraftforge.fml.common.discovery.ASMDataTable
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.registries.IForgeRegistry
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.MOD_ID
-import net.ndrei.teslacorelib.annotations.IRegistryHandler
-import net.ndrei.teslacorelib.annotations.RegistryHandler
 
-@RegistryHandler
 @Suppress("unused")
-object FluidsRegistry: IRegistryHandler {
+object FluidsRegistry {
     lateinit var GASEOUS_LAVA: Array<BCFluidBase>
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
     }
 
-    override fun registerBlocks(asm: ASMDataTable, registry: IForgeRegistry<Block>) {
+    fun registerFluids() {
         GASEOUS_LAVA = registerFluid("gaseous_lava", 0x99FF0000.toInt(), 15, isGaseous = true).also {
             it.forEach {
                 BuildcraftFuelRegistry.fuel?.addFuel(it, when (it.fluidTemperature) {
@@ -57,7 +51,7 @@ object FluidsRegistry: IRegistryHandler {
         ev.map.registerSprite(ResourceLocation(MOD_ID, "blocks/base_fluid_flow"))
     }
 
-    fun registerFluid(name: String, color: Int, luminosity: Int = 0, density: Int = 1000, viscosity: Int = 1000, isGaseous: Boolean = false): Array<BCFluidBase> {
+    private fun registerFluid(name: String, color: Int, luminosity: Int = 0, density: Int = 1000, viscosity: Int = 1000, isGaseous: Boolean = false): Array<BCFluidBase> {
         val still = ResourceLocation(MOD_ID, "blocks/base_fluid_still")
         val flowing = ResourceLocation(MOD_ID, "blocks/base_fluid_flow")
 
