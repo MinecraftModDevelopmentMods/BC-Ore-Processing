@@ -6,6 +6,7 @@ import buildcraft.api.mj.MjAPI
 import buildcraft.api.mj.MjBattery
 import buildcraft.lib.misc.MessageUtil
 import buildcraft.lib.net.IPayloadReceiver
+import buildcraft.lib.net.IPayloadWriter
 import buildcraft.lib.net.MessageUpdateTile
 import buildcraft.lib.net.PacketBufferBC
 import io.netty.buffer.Unpooled
@@ -17,6 +18,7 @@ import net.minecraft.util.ITickable
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraftforge.common.capabilities.Capability
+import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler
 import net.minecraftforge.fluids.capability.IFluidHandler
@@ -24,6 +26,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 import net.minecraftforge.items.CapabilityItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.lib.deserialize
 import net.ndrei.bcoreprocessing.lib.fluids.FluidTankEx
 import net.ndrei.bcoreprocessing.lib.render.IFluidStacksHolder
@@ -41,7 +44,7 @@ abstract class BaseOreProcessorMachine
 
             if (this.stored != this.lastPower) {
                 this.lastPower = this.stored
-                this@BaseOreProcessorMachine.markForUpdate()
+                this@BaseOreProcessorMachine.markForUpdate(STORAGE_BATTERY)
             }
         }
     }
@@ -75,7 +78,7 @@ abstract class BaseOreProcessorMachine
 
         override fun onContentsChanged(slot: Int) {
             super.onContentsChanged(slot)
-            this@BaseOreProcessorMachine.markForUpdate()
+            this@BaseOreProcessorMachine.markForUpdate(STORAGE_ITEM_STACK)
         }
     }
 
@@ -88,7 +91,7 @@ abstract class BaseOreProcessorMachine
 
         override fun onContentsChanged() {
             super.onContentsChanged()
-            this@BaseOreProcessorMachine.markForUpdate()
+            this@BaseOreProcessorMachine.markForUpdate(STORAGE_FLUID_TANK)
         }
     }
 
@@ -97,8 +100,43 @@ abstract class BaseOreProcessorMachine
 
         override fun onContentsChanged() {
             super.onContentsChanged()
-            this@BaseOreProcessorMachine.markForUpdate()
+            this@BaseOreProcessorMachine.markForUpdate(STORAGE_RESIDUE_TANK)
         }
+    }
+
+    private var syncEverything = false
+    private val syncWriters = mutableMapOf<String, IPayloadWriter>()
+    private val syncReceivers = mutableMapOf<String, IPayloadReceiver>()
+    private val syncOnNextTick = mutableSetOf<String>()
+
+    init {
+        fun registerSyncFluidPart(key: String, tank: FluidTankEx) {
+            this.registerSyncPart(key, IPayloadWriter { buffer ->
+                val fluid = tank.fluid
+                if ((fluid == null) || (fluid.amount == 0)) {
+                    buffer.writeInt(0)
+                } else {
+                    buffer.writeInt(fluid.amount)
+                    buffer.writeString(fluid.fluid.name)
+                }
+            }, IPayloadReceiver { _, buffer ->
+                val fluidAmount = buffer.readInt()
+                tank.fluid = if (fluidAmount > 0) {
+                    val fluidName = buffer.readString()
+                    FluidStack(FluidRegistry.getFluid(fluidName), fluidAmount)
+                } else null
+                null
+            })
+        }
+        registerSyncFluidPart(STORAGE_FLUID_TANK, this.fluidTank)
+        registerSyncFluidPart(STORAGE_RESIDUE_TANK, this.residueTank)
+
+        registerSyncPart(STORAGE_ITEM_STACK, IPayloadWriter { buffer ->
+            buffer.writeCompoundTag(this.itemHandler.serializeNBT())
+        }, IPayloadReceiver { _, buffer ->
+            this.itemHandler.deserializeNBT(buffer.readCompoundTag())
+            null
+        })
     }
 
     //#region fluid / inventory      methods
@@ -196,21 +234,83 @@ abstract class BaseOreProcessorMachine
             this.battery.serialize(compound, STORAGE_BATTERY)
         }
 
+    //#endregion
+    //#region sync                   methods
+
+    protected fun registerSyncPart(key: String, writer: IPayloadWriter, receiver: IPayloadReceiver) {
+        this.syncWriters[key] = writer
+        this.syncReceivers[key] = receiver
+    }
+
     override fun getUpdateTag() = this.writeToNBT(super.getUpdateTag())
 
-    protected fun markForUpdate() {
+    protected fun markForUpdate(key: String? = null) {
         this.markDirty()
         this.getWorld()?.also {
             if (!it.isRemote) {
-                val payload = PacketBufferBC(Unpooled.buffer())
-                payload.writeCompoundTag(this.updateTag)
-                MessageUtil.sendToAllWatching(this.getWorld(), this.getPos(), MessageUpdateTile(this.getPos(), payload))
+                if (key.isNullOrBlank()/* || !this.syncWriters.containsKey(key)*/) {
+                    this.syncEverything = true
+                }
+                else {
+                    this.syncOnNextTick.add(key!!)
+                }
             }
         }
     }
 
+    private fun sendPayload() {
+        val payload = PacketBufferBC(Unpooled.buffer())
+
+        when {
+            this.syncEverything -> {
+                payload.writeBoolean(true)
+                payload.writeCompoundTag(this.updateTag)
+//                BCOreProcessing.logger.info("Sending full sync package.")
+            }
+            this.syncOnNextTick.isNotEmpty() -> {
+                payload.writeBoolean(false)
+                val keys = this.syncOnNextTick.filter {
+                    this.syncWriters.containsKey(it)
+                }
+                if (keys.count() == 0) {
+                    return
+                }
+//                BCOreProcessing.logger.info("Sending partial sync package [${keys.joinToString(", ")}].")
+                payload.writeInt(keys.count())
+                keys.forEach {
+                    payload.writeString(it)
+                    this.syncWriters[it]!!.write(payload)
+                }
+            }
+            else -> return
+        }
+
+        this.syncEverything = false
+        this.syncOnNextTick.clear()
+
+        MessageUtil.sendToAllWatching(this.getWorld(), this.getPos(), MessageUpdateTile(this.getPos(), payload))
+    }
+
     override fun receivePayload(ctx: MessageContext, buffer: PacketBufferBC): IMessage? {
-        buffer.readCompoundTag()?.also { this.readFromNBT(it) }
+        val flag = buffer.readBoolean()
+        if (flag) {
+//            BCOreProcessing.logger.info("Receiving full sync package.")
+            buffer.readCompoundTag()?.also { this.readFromNBT(it) }
+        }
+        else {
+            val keys = buffer.readInt()
+//            BCOreProcessing.logger.info("Receiving partial sync package [$keys keys].")
+            (0 until keys).forEach {
+                val key = buffer.readString()
+                if (this.syncReceivers.containsKey(key)) {
+                    this.syncReceivers[key]!!.receivePayload(ctx, buffer)
+                }
+                else {
+                    BCOreProcessing.logger.error("[${this.javaClass.name}] Received unknown sync part: '$key'. Stopping message.")
+                    return null
+                }
+            }
+        }
         return null
     }
 
@@ -219,6 +319,7 @@ abstract class BaseOreProcessorMachine
     override fun update() {
         this.renderAngle = (this.renderAngle + 360f / 50f) % 360f
         this.battery.tick(this.world, this.pos)
+        this.sendPayload()
     }
 
     companion object {

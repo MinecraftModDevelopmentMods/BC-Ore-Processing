@@ -29,7 +29,7 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
         GlStateManager.translate(x + .5f, y + .25f, z + .5f)
         GlStateManager.scale(1.5f, 1.5f, 1.5f)
         GlStateManager.rotate(holder.renderAngle, 0.0f, 1.0f, 0.0f)
-        GlStateManager.color(1.0f, 1.0f, 1.0f, .15f)
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
 
         val transformedModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false)
         Minecraft.getMinecraft().renderItem.renderItem(stack, transformedModel)

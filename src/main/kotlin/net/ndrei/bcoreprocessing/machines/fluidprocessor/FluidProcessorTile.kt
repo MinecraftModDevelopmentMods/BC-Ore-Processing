@@ -1,9 +1,12 @@
 package net.ndrei.bcoreprocessing.machines.fluidprocessor
 
 import buildcraft.api.mj.MjAPI
+import buildcraft.lib.net.IPayloadReceiver
+import buildcraft.lib.net.IPayloadWriter
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.Constants
+import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
 import net.ndrei.bcoreprocessing.lib.copyWithSize
 import net.ndrei.bcoreprocessing.lib.recipes.FluidProcessorRecipeManager
@@ -14,6 +17,25 @@ class FluidProcessorTile
 
     private var currentFluid: FluidStack? = null
     private var currentTick: Int = 0
+
+    init {
+        super.registerSyncPart(STORAGE_CURRENT_FLUID, IPayloadWriter { buffer ->
+            val fluid = this.currentFluid
+            if ((fluid == null) || (fluid.amount == 0)) {
+                buffer.writeInt(0)
+            } else {
+                buffer.writeInt(fluid.amount)
+                buffer.writeString(fluid.fluid.name)
+            }
+        }, IPayloadReceiver { _, buffer ->
+            val fluidAmount = buffer.readInt()
+            this.currentFluid = if (fluidAmount > 0) {
+                val fluidName = buffer.readString()
+                FluidStack(FluidRegistry.getFluid(fluidName), fluidAmount)
+            } else null
+            null
+        })
+    }
 
     //#region storage & inventory
 
@@ -33,8 +55,8 @@ class FluidProcessorTile
         this.currentTick = if (compound.hasKey("current_tick", Constants.NBT.TAG_COMPOUND)) {
             compound.getInteger("current_tick")
         } else 0
-        this.currentFluid = if (compound.hasKey("current_fluid", Constants.NBT.TAG_COMPOUND)) {
-            FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("current_fluid"))
+        this.currentFluid = if (compound.hasKey(STORAGE_CURRENT_FLUID, Constants.NBT.TAG_COMPOUND)) {
+            FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(STORAGE_CURRENT_FLUID))
         } else null
     }
 
@@ -42,7 +64,7 @@ class FluidProcessorTile
         super.writeToNBT(compound).also {
             it.setInteger("current_tick", this.currentTick)
             if (this.currentFluid != null) {
-               it.setTag("current_fluid", this.currentFluid!!.writeToNBT(NBTTagCompound()))
+               it.setTag(STORAGE_CURRENT_FLUID, this.currentFluid!!.writeToNBT(NBTTagCompound()))
             }
         }
 
@@ -71,6 +93,7 @@ class FluidProcessorTile
                         this.fluidTank.drainInternal(fluidAtTick, true)
                         if (this.currentFluid == null) {
                             this.currentFluid = fluidAtTick.copyWithSize(1)
+                            this.markForUpdate(STORAGE_CURRENT_FLUID)
                         }
                     }
 
@@ -78,6 +101,7 @@ class FluidProcessorTile
                     if (this.currentTick >= recipe.getProcessingTicks()) {
                         this.currentTick = 0
                         this.currentFluid = null
+                        this.markForUpdate(STORAGE_CURRENT_FLUID)
                         this.itemHandler.setStackInSlot(0, recipe.getRecipeOutput().first)
                     }
 
@@ -87,5 +111,9 @@ class FluidProcessorTile
         }
 
         super.update()
+    }
+
+    companion object {
+        protected const val STORAGE_CURRENT_FLUID = "current_fluid"
     }
 }
