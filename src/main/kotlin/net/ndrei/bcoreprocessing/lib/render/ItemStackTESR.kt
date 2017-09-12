@@ -5,14 +5,14 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms
 import net.minecraft.client.renderer.texture.TextureMap
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
-import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
 
 object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
     override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
-        val stack = (te as? IItemStackHolder)?.getItemStack() ?: ItemStack.EMPTY
-        if ((te == null) || stack.isEmpty) {
-            return;
+        val holder = (te as? IItemStackHolder) ?: return
+        val stack = holder.getItemStack()
+        if ((te == null) || (stack.isEmpty)) {
+            return
         }
 
         this.rendererDispatcher.renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false)
@@ -28,6 +28,7 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
 
         GlStateManager.translate(x + .5f, y + .25f, z + .5f)
         GlStateManager.scale(1.5f, 1.5f, 1.5f)
+        GlStateManager.rotate(holder.renderAngle, 0.0f, 1.0f, 0.0f)
         GlStateManager.color(1.0f, 1.0f, 1.0f, .15f)
 
         val transformedModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false)

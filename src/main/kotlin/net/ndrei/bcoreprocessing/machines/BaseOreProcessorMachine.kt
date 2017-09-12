@@ -111,6 +111,7 @@ abstract class BaseOreProcessorMachine
     protected open fun getItemStackLimit(stack: ItemStack) = 1
 
     override fun getItemStack() = this.itemHandler.getStackInSlot(0)
+    override var renderAngle: Float = 0f
 
     override final fun getFluidStacks() =
         arrayOf(this.fluidTank, this.residueTank)
@@ -216,6 +217,7 @@ abstract class BaseOreProcessorMachine
     //#endregion
 
     override fun update() {
+        this.renderAngle = (this.renderAngle + 360f / 50f) % 360f
         this.battery.tick(this.world, this.pos)
     }
 

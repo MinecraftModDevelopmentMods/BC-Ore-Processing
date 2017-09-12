@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.Constants
 import net.minecraftforge.common.util.INBTSerializable
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.items.ItemHandlerHelper
 import net.minecraftforge.items.ItemStackHandler
 
@@ -31,3 +32,6 @@ fun INBTSerializable<NBTTagCompound>.deserialize(root: NBTTagCompound, key: Stri
 fun INBTSerializable<NBTTagCompound>.serialize(root: NBTTagCompound, key: String) {
     root.setTag(key, this.serializeNBT())
 }
+
+fun FluidStack.copyWithSize(amount: Int) =
+    FluidStack(this.fluid, amount)

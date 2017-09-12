@@ -46,36 +46,35 @@ class OreProcessorTile
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
         val currentInput = this.itemHandler.getStackInSlot(0)
         if (!currentInput.isEmpty && (this.battery.stored >= power)) {
-            val recipe = OreProcessorRecipeManager.findFirstRecipe(currentInput, false) ?: return
-            val fluids = recipe.getOutputForTick(this.currentTick)
-            if ((fluids.first != null) || (fluids.second != null)) {
-                val fluid1 = fluids.first
-                val f1ok = (fluid1 == null) || (fluid1.amount == 0) || (this.fluidTank.fillInternal(fluid1, false) == fluid1.amount)
+            val recipe = OreProcessorRecipeManager.findFirstRecipe(currentInput, false)
+            if (recipe != null) {
+                val fluids = recipe.getOutputForTick(this.currentTick)
+                if ((fluids.first != null) || (fluids.second != null)) {
+                    val fluid1 = fluids.first
+                    val f1ok = (fluid1 == null) || (fluid1.amount == 0) || (this.fluidTank.fillInternal(fluid1, false) == fluid1.amount)
 
-                val fluid2 = fluids.second
-                val f2ok = (fluid2 == null) || (fluid2.amount == 0) || (this.residueTank.fillInternal(fluid2, false) == fluid2.amount)
+                    val fluid2 = fluids.second
+                    val f2ok = (fluid2 == null) || (fluid2.amount == 0) || (this.residueTank.fillInternal(fluid2, false) == fluid2.amount)
 
-                if (!f1ok || !f2ok) {
-                    // something could not be processed, skip tick
-                    return
-                }
+                    if (f1ok && f2ok) {
+                        if ((fluid1 != null) && (fluid1.amount > 0)) {
+                            this.fluidTank.fillInternal(fluid1, true)
+                        }
 
-                if ((fluid1 != null) && (fluid1.amount > 0)) {
-                    this.fluidTank.fillInternal(fluid1, true)
-                }
+                        if ((fluid2 != null) && (fluid2.amount > 0)) {
+                            this.residueTank.fillInternal(fluid2, true)
+                        }
+                    }
 
-                if ((fluid2 != null) && (fluid2.amount > 0)) {
-                    this.residueTank.fillInternal(fluid2, true)
+                    this.currentTick++
+                    if (this.currentTick >= recipe.getProcessingTicks()) {
+                        this.currentTick = 0
+                        this.itemHandler.setStackInSlot(0, ItemStack.EMPTY)
+                    }
+
+                    this.battery.extractPower(power)
                 }
             }
-
-            this.currentTick++
-            if (this.currentTick >= recipe.getProcessingTicks()) {
-                this.currentTick = 0
-                this.itemHandler.setStackInSlot(0, ItemStack.EMPTY)
-            }
-
-            this.battery.extractPower(power)
         }
 
         super.update()
