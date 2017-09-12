@@ -70,7 +70,7 @@ class FluidProcessorTile
 
     //#endregion
 
-    override fun update() {
+    override fun innerUpdate() {
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
         val inputFluid = this.currentFluid ?: this.fluidTank.fluid
         if ((inputFluid != null) && (inputFluid.amount > 0) && (this.battery.stored >= power) && this.itemHandler.getStackInSlot(0).isEmpty) {
@@ -109,8 +109,6 @@ class FluidProcessorTile
                 }
             }
         }
-
-        super.update()
     }
 
     companion object {

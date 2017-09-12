@@ -109,6 +109,8 @@ abstract class BaseOreProcessorMachine
     private val syncReceivers = mutableMapOf<String, IPayloadReceiver>()
     private val syncOnNextTick = mutableSetOf<String>()
 
+    private var lastWorkingState = false
+
     init {
         fun registerSyncFluidPart(key: String, tank: FluidTankEx) {
             this.registerSyncPart(key, IPayloadWriter { buffer ->
@@ -315,12 +317,40 @@ abstract class BaseOreProcessorMachine
     }
 
     //#endregion
+    //#region blockstate             methods
 
-    override fun update() {
-        this.renderAngle = (this.renderAngle + 360f / 50f) % 360f
-        this.battery.tick(this.world, this.pos)
-        this.sendPayload()
+    protected open fun isWorking() =
+        !this.itemHandler.getStackInSlot(0).isEmpty ||
+            (this.fluidTank.fluidAmount > 0) ||
+            (this.residueTank.fluidAmount > 0)
+
+    private fun testWorkingState() {
+        if (this.getWorld().isRemote) {
+            val working = this.isWorking()
+            if (working != lastWorkingState) {
+                (this.getBlockType() as? BaseOreProcessorBlock<*>)
+                    ?.setIsWorking(this.getWorld(), this.getPos(), working)
+                this.lastWorkingState = working
+            }
+        }
     }
+
+    //#endregion
+
+    override final fun update() {
+        this.innerUpdate()
+
+        if (this.getWorld().isRemote) {
+            this.renderAngle = (this.renderAngle + 360f / 50f) % 360f
+            this.testWorkingState()
+        }
+        else {
+            this.battery.tick(this.world, this.pos)
+            this.sendPayload()
+        }
+    }
+
+    protected open fun innerUpdate() { }
 
     companion object {
         private const val STORAGE_FLUID_TANK = "fluid_tank"

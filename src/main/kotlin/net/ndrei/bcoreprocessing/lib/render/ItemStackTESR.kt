@@ -26,7 +26,7 @@ object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
         GlStateManager.pushMatrix()
         val ibakedmodel = Minecraft.getMinecraft().renderItem.getItemModelWithOverrides(stack, te.world, null)
 
-        GlStateManager.translate(x + .5f, y + .25f, z + .5f)
+        GlStateManager.translate(x + .5f, y + .15f, z + .5f)
         GlStateManager.scale(1.5f, 1.5f, 1.5f)
         GlStateManager.rotate(holder.renderAngle, 0.0f, 1.0f, 0.0f)
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)

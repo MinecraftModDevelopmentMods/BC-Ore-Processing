@@ -42,7 +42,7 @@ class OreProcessorTile
 
     //#endregion
 
-    override fun update() {
+    override fun innerUpdate() {
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
         val currentInput = this.itemHandler.getStackInSlot(0)
         if (!currentInput.isEmpty && (this.battery.stored >= power)) {
@@ -76,7 +76,5 @@ class OreProcessorTile
                 }
             }
         }
-
-        super.update()
     }
 }

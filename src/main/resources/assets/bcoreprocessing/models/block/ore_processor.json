@@ -1,6 +1,7 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/cube",
   "textures": {
-    "all": "bcoreprocessing:blocks/ore_processor"
+    "particles": "bcoreprocessing:blocks/ore_processor_front",
+
   }
 }

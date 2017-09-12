@@ -24,11 +24,14 @@ open class CommonProxy(val side: Side) {
     }
 
     open fun init(ev: FMLInitializationEvent) {
+        this.getModBlocks().forEach { it.registerRecipe() }
+
         OreProcessorRecipeManager.registerRecipes()
         FluidProcessorRecipeManager.registerRecipes()
     }
 
-    open fun postInit(ev: FMLPostInitializationEvent) { }
+    open fun postInit(ev: FMLPostInitializationEvent) {
+    }
 
     protected fun getModBlocks() =
         arrayOf(OreProcessorBlock, FluidProcessorBlock)

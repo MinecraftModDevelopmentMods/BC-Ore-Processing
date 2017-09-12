@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger
     dependencies = MOD_DEPENDENCIES,
     useMetadata = true, modLanguage = "kotlin", modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter")
 object BCOreProcessing {
-    @SidedProxy(clientSide = "net.ndrei.bcoreprocessing.ClientProxy", serverSide = "net.ndrei.bcoreprocessing.CommonProxy")
+    @SidedProxy(clientSide = "net.ndrei.bcoreprocessing.ClientProxy", serverSide = "net.ndrei.bcoreprocessing.ServerProxy")
     lateinit var proxy: CommonProxy
     lateinit var logger: Logger
     lateinit var configHelper: ModConfigHandler
