@@ -51,8 +51,8 @@ open class CommonProxy(val side: Side) {
 @SideOnly(Side.CLIENT)
 @Suppress("unused")
 class ClientProxy : CommonProxy(Side.CLIENT) {
-    override fun postInit(ev: FMLPostInitializationEvent) {
-        super.postInit(ev)
+    override fun preInit(ev: FMLPreInitializationEvent) {
+        super.preInit(ev)
         super.getModBlocks().forEach { it.registerRenderer() }
     }
 }
