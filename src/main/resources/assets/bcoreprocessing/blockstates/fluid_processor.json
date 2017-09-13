@@ -8,7 +8,9 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}],
+    "inventory": [{
+      "model": "bcoreprocessing:base_processor_inv"
+    }],
     "facing": {
       "north": {},
       "south": {"y": 180},

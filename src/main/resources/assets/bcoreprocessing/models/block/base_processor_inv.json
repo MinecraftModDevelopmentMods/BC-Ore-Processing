@@ -1,0 +1,13 @@
+{
+  "ambientocclusion": false,
+  "parent": "block/cube",
+  "textures": {
+    "particle": "#front",
+    "north": "#front",
+    "west": "bcoreprocessing:blocks/processor_item",
+    "east": "bcoreprocessing:blocks/processor_item",
+    "south": "bcoreprocessing:blocks/processor_energy",
+    "up": "bcoreprocessing:blocks/processor_fluid",
+    "down": "bcoreprocessing:blocks/processor_fluid"
+  }
+}
