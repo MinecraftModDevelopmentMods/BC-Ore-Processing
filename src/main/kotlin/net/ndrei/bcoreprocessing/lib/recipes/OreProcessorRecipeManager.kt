@@ -2,12 +2,15 @@ package net.ndrei.bcoreprocessing.lib.recipes
 
 import net.minecraft.item.ItemStack
 import net.minecraft.util.JsonUtils
+import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.oredict.OreDictionary
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.api.recipes.IOreProcessorRecipe
 import net.ndrei.bcoreprocessing.api.recipes.IOreProcessorRecipeManager
 import net.ndrei.bcoreprocessing.lib.config.readFluidStack
 import net.ndrei.bcoreprocessing.lib.config.readItemStacks
+import net.ndrei.bcoreprocessing.lib.fluids.FluidsRegistry
 
 object OreProcessorRecipeManager : IOreProcessorRecipeManager {
     private val recipes = mutableListOf<IOreProcessorRecipe>()
@@ -40,6 +43,18 @@ object OreProcessorRecipeManager : IOreProcessorRecipeManager {
                             }
                         }
                     }
+                }
+            }
+        }
+
+        FluidsRegistry.getFluidToProcess().forEach {
+            val fluid = FluidRegistry.getFluid("bcop-${it.fluidName}-searing") ?: return@forEach
+            val ores = OreDictionary.getOres(it.oreName)
+            if (ores.isNotEmpty()) {
+                /*val ingot = */OreDictionary.getOres(it.ingotName).firstOrNull() ?: return@forEach
+
+                ores.forEach {
+                    this.registerSimpleRecipe(it, Pair(FluidStack(fluid, 1000), FluidStack(FluidsRegistry.GASEOUS_LAVA[3], 125)), 40)
                 }
             }
         }

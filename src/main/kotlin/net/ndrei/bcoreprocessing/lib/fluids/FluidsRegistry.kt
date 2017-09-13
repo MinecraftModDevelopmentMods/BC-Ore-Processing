@@ -15,6 +15,7 @@ import net.ndrei.bcoreprocessing.MOD_ID
 @Suppress("unused")
 object FluidsRegistry {
     lateinit var GASEOUS_LAVA: Array<BCFluidBase>
+    private val processFluids = mutableListOf<ProcessedFluidInfo>()
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
@@ -41,6 +42,12 @@ object FluidsRegistry {
             val gaseous = JsonUtils.getBoolean(it, "gaseous", false)
 
             registerFluid(name, color, luminosity, density, viscosity, gaseous)
+
+            val ore = JsonUtils.getString(it, "ore", "")
+            val ingot = JsonUtils.getString(it, "ingot", "")
+            if (!ore.isNullOrBlank() && !ingot.isNullOrBlank()) {
+                this.processFluids.add(ProcessedFluidInfo(name, ore, ingot, JsonUtils.getInt(it, "itemMultiplier", 1)))
+            }
         }
     }
 
@@ -74,4 +81,8 @@ object FluidsRegistry {
             }
         }
     }
+
+    class ProcessedFluidInfo(val fluidName: String, val oreName: String, val ingotName: String, val multiplier: Int)
+
+    fun getFluidToProcess() = this.processFluids.toList()
 }

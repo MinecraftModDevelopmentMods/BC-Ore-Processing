@@ -1,7 +1,7 @@
 [
   {
 	"input_fluid": { "name": "bcop-gaseous_lava-searing", "quantity": 1000 },
-	"ticks": 20,
+	"ticks": 40,
 	"output_stack": { "name": "stone" },
 	"variants": [
 	  { "temperature": "hot" },
@@ -10,18 +10,8 @@
   },
   {
     "input_fluid": { "name": "bcop-iron-searing", "quantity": 1000 },
-    "ticks": 20,
+    "ticks": 40,
     "output_stack": { "ore": "ingotIron", "quantity": 1 },
-    "residue": { "name": "bcop-gaseous_lava-searing", "quantity": 50 },
-    "variants": [
-      { "temperature": "hot", "items": 2, "residue": 25 },
-      { "temperature": "cool", "items": 3, "residue": 10 }
-    ]
-  },
-  {
-    "input_fluid": { "name": "bcop-gold-searing", "quantity": 1000 },
-    "ticks": 20,
-    "output_stack": { "ore": "ingotGold", "quantity": 1 },
     "residue": { "name": "bcop-gaseous_lava-searing", "quantity": 50 },
     "variants": [
       { "temperature": "hot", "items": 2, "residue": 25 },

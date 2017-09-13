@@ -20,6 +20,8 @@ open class CommonProxy(val side: Side) {
         // TODO: find a way to move this to the corresponding registries
         this.getModBlocks().forEach { it.registerBlock() }
         this.getModBlocks().forEach { it.registerItem() }
+
+        // "crucial" for this to happen before XXXProcessorRecipeManager.registerRecipes()
         FluidsRegistry.registerFluids()
     }
 

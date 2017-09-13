@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.JsonUtils
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.oredict.OreDictionary
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.api.recipes.IFluidProcessorRecipe
 import net.ndrei.bcoreprocessing.api.recipes.IFluidProcessorRecipeManager
@@ -11,6 +12,7 @@ import net.ndrei.bcoreprocessing.lib.config.readFluidStack
 import net.ndrei.bcoreprocessing.lib.config.readItemStack
 import net.ndrei.bcoreprocessing.lib.copyWithSize
 import net.ndrei.bcoreprocessing.lib.fluids.FluidTemperature
+import net.ndrei.bcoreprocessing.lib.fluids.FluidsRegistry
 
 object FluidProcessorRecipeManager : IFluidProcessorRecipeManager {
     private val recipes = mutableListOf<IFluidProcessorRecipe>()
@@ -63,6 +65,23 @@ object FluidProcessorRecipeManager : IFluidProcessorRecipeManager {
                         }
                     }
                 }
+            }
+        }
+
+
+        FluidsRegistry.getFluidToProcess().forEach {
+            val ores = OreDictionary.getOres(it.oreName)
+            if (ores.isNotEmpty()) {
+                val ingot = OreDictionary.getOres(it.ingotName).firstOrNull() ?: return@forEach
+                arrayOf(FluidTemperature.COOL, FluidTemperature.HOT, FluidTemperature.SEARING)
+                    .map { temperature ->
+                        val fluid = FluidRegistry.getFluid("bcop-${it.fluidName}-${temperature.name.toLowerCase()}") ?: return@map
+                        this.registerSimpleRecipe(
+                            FluidStack(fluid, 1000),
+                            ingot.copyWithSize(temperature.baseIngots * it.multiplier),
+                            FluidStack(FluidsRegistry.GASEOUS_LAVA[3], temperature.baseResidue),
+                            40)
+                    }
             }
         }
     }
