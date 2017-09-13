@@ -25,35 +25,37 @@ object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
         val b1 = if (stacks[0].fluid.isGaseous) 1.0f - h1 - (if ((h2 > 0.0f) && stacks[1].fluid.isGaseous) h2 else 0.0f) else 0.0f
         val b2 = if (h2 > 0.0f) (if (stacks[1].fluid.isGaseous) 1.0f - h2 else (if (stacks[0].fluid.isGaseous) 0.0f else h1)) else 0.0f
 
-        GlStateManager.pushAttrib()
+//        GlStateManager.pushAttrib()
         GlStateManager.pushMatrix()
         GlStateManager.translate(x.toFloat() + 0.0f, y.toFloat() + 0.0f, z.toFloat() + 0.0f)
         val magicNumber = 1.0f / 16.0f
         GlStateManager.scale(magicNumber, magicNumber, magicNumber)
         super.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE)
         GlStateManager.enableBlend()
+        GlStateManager.disableCull()
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
         GlStateManager.disableLighting()
         super.setLightmapDisabled(true)
         
         if (h1 > 0.0f) {
-            this.renderFluid(b1 * 16.0f, h1 * 16.0f, stacks[0].fluid)
+            this.renderFluid(b1 * 15.0f + 0.5f, h1 * 15.0f, stacks[0].fluid)
         }
         if (h2 > 0.0f) {
-            this.renderFluid(b2 * 16.0f, h2 * 16.0f, stacks[1].fluid)
+            this.renderFluid(b2 * 15.0f + 0.5f, h2 * 15.0f, stacks[1].fluid)
         }
 
         super.setLightmapDisabled(false)
         GlStateManager.enableLighting()
         GlStateManager.disableBlend()
+        GlStateManager.enableCull()
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
         GlStateManager.popMatrix()
-        GlStateManager.popAttrib()
+//        GlStateManager.popAttrib()
     }
 
     private fun renderFluid(bottom: Float, height: Float, fluid: Fluid) {
-        val color = fluid.getColor()
-        val still = fluid.getStill()
+        val color = fluid.color
+        val still = fluid.still
 //        val flowing = fluid.getFlowing()
         val stillSprite: TextureAtlasSprite =
             (if (still == null) null else Minecraft.getMinecraft().textureMapBlocks.getTextureExtry(still.toString()))
