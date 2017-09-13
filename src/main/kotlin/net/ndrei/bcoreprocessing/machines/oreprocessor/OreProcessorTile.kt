@@ -64,15 +64,15 @@ class OreProcessorTile
                         if ((fluid2 != null) && (fluid2.amount > 0)) {
                             this.residueTank.fillInternal(fluid2, true)
                         }
-                    }
 
-                    this.currentTick++
-                    if (this.currentTick >= recipe.getProcessingTicks()) {
-                        this.currentTick = 0
-                        this.itemHandler.setStackInSlot(0, ItemStack.EMPTY)
-                    }
+                        this.currentTick++
+                        if (this.currentTick >= recipe.getProcessingTicks()) {
+                            this.currentTick = 0
+                            this.itemHandler.setStackInSlot(0, ItemStack.EMPTY)
+                        }
 
-                    this.battery.extractPower(power)
+                        this.battery.extractPower(power)
+                    }
                 }
             }
         }
