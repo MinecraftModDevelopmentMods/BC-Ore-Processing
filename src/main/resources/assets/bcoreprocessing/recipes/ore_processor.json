@@ -10,7 +10,7 @@
   "key": {
     "t": { "item": "buildcraftfactory:tank" },
     "g": { "type": "forge:ore_dict", "ore": "gearIron" },
-    "f": { "item": "furnace" }
+    "f": { "item": "minecraft:furnace" }
   },
   "conditions": [
     { "type": "minecraft:item_exists", "item": "buildcraftfactory:tank" }
