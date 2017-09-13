@@ -7,7 +7,7 @@ buildscript {
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.kotlin_version}"
     }
 }
@@ -102,10 +102,10 @@ dependencies {
     runtime "mezz.jei:jei_${project.minecraft_version}:${project.jei_version}"
 
 //    hopefully these will be available once released for 1.12
-    if (file("bc-lib/buildcraft-${project.bc_version}.jar").exists() &&
-            file("bc-lib/buildcraft-${project.bc_version}-dev.jar").exists()) {
-        compileOnly files("bc-lib/buildcraft-${project.bc_version}-dev.jar")
-        runtime files("bc-lib/buildcraft-${project.bc_version}.jar")
+    if (file("bc-lib/buildcraft-${project.bc_version}-foc.jar").exists() &&
+            file("bc-lib/buildcraft-${project.bc_version}-foc-dev.jar").exists()) {
+        compileOnly files("bc-lib/buildcraft-${project.bc_version}-foc-dev.jar")
+        runtime files("bc-lib/buildcraft-${project.bc_version}-foc.jar")
     }
     else {
         compileOnly "com.mod-buildcraft:buildcraft-api:${project.bc_version}"

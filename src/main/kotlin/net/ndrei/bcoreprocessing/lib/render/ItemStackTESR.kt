@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
 
 object ItemStackTESR : TileEntitySpecialRenderer<TileEntity>() {
-    override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
+    override fun render(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int, alpha: Float) {
         val holder = (te as? IItemStackHolder) ?: return
         val stack = holder.getItemStack()
         if ((te == null) || (stack.isEmpty)) {

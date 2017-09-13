@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.Fluid
 import org.lwjgl.opengl.GL11
 
 object FluidStacksTESR : TileEntitySpecialRenderer<TileEntity>() {
-    override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
+    override fun render(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int, alpha: Float) {
         val holder = (te as? IFluidStacksHolder) ?: return
         val stacks = holder.getFluidStacks()
         if (stacks.isEmpty()) {
