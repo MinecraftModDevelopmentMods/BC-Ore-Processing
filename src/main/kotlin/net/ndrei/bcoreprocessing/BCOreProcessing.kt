@@ -10,10 +10,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.ndrei.bcoreprocessing.api.recipes.OreProcessingRecipes
+import net.ndrei.bcoreprocessing.lib.config.ModConfigHandler
 import net.ndrei.bcoreprocessing.lib.recipes.FluidProcessorRecipeManager
 import net.ndrei.bcoreprocessing.lib.recipes.OreProcessorRecipeManager
 import net.ndrei.bcoreprocessing.machines.oreprocessor.OreProcessorBlock
-import net.ndrei.teslacorelib.config.ModConfigHandler
 import org.apache.logging.log4j.Logger
 
 @Suppress("unused")
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger
     dependencies = MOD_DEPENDENCIES,
     useMetadata = true, modLanguage = "kotlin", modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter")
 object BCOreProcessing {
-    @SidedProxy(clientSide = "net.ndrei.bcoreprocessing.ClientProxy", serverSide = "net.ndrei.bcoreprocessing.CommonProxy")
+    @SidedProxy(clientSide = "net.ndrei.bcoreprocessing.ClientProxy", serverSide = "net.ndrei.bcoreprocessing.ServerProxy")
     lateinit var proxy: CommonProxy
     lateinit var logger: Logger
     lateinit var configHelper: ModConfigHandler

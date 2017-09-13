@@ -1,24 +1,20 @@
 package net.ndrei.bcoreprocessing.lib.recipes
 
 import net.minecraft.item.ItemStack
-import net.minecraft.item.crafting.IRecipe
 import net.minecraft.util.JsonUtils
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
-import net.minecraftforge.fml.common.discovery.ASMDataTable
-import net.minecraftforge.registries.IForgeRegistry
+import net.minecraftforge.oredict.OreDictionary
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.api.recipes.IFluidProcessorRecipe
 import net.ndrei.bcoreprocessing.api.recipes.IFluidProcessorRecipeManager
+import net.ndrei.bcoreprocessing.lib.config.readFluidStack
+import net.ndrei.bcoreprocessing.lib.config.readItemStack
+import net.ndrei.bcoreprocessing.lib.copyWithSize
 import net.ndrei.bcoreprocessing.lib.fluids.FluidTemperature
-import net.ndrei.teslacorelib.annotations.IRegistryHandler
-import net.ndrei.teslacorelib.annotations.RegistryHandler
-import net.ndrei.teslacorelib.config.readFluidStack
-import net.ndrei.teslacorelib.config.readItemStack
-import net.ndrei.teslacorelib.utils.copyWithSize
+import net.ndrei.bcoreprocessing.lib.fluids.FluidsRegistry
 
-@RegistryHandler
-object FluidProcessorRecipeManager : IFluidProcessorRecipeManager, IRegistryHandler {
+object FluidProcessorRecipeManager : IFluidProcessorRecipeManager {
     private val recipes = mutableListOf<IFluidProcessorRecipe>()
 
     override fun registerRecipe(recipe: IFluidProcessorRecipe) {
@@ -31,7 +27,7 @@ object FluidProcessorRecipeManager : IFluidProcessorRecipeManager, IRegistryHand
     override fun findFirstRecipe(input: FluidStack, ignoreSize: Boolean) =
         this.recipes.firstOrNull { it.isInput(input, ignoreSize) }
 
-    override fun registerRecipes(asm: ASMDataTable, registry: IForgeRegistry<IRecipe>) {
+    fun registerRecipes() {
         BCOreProcessing.configHelper.readExtraRecipesFile("fluid_processor") {
             val input = it.readFluidStack("input_fluid") ?: return@readExtraRecipesFile
             val output = it.readItemStack("output_stack") ?: return@readExtraRecipesFile
@@ -64,11 +60,28 @@ object FluidProcessorRecipeManager : IFluidProcessorRecipeManager, IRegistryHand
                             this.registerSimpleRecipe(
                                 FluidStack(newFluid, input.amount),
                                 output.copyWithSize(newOutputQuantity),
-                                if (residue != null) residue.copy().also { it.amount = newResidueQuantity } else null,
+                                residue?.copy()?.also { it.amount = newResidueQuantity },
                                 ticks)
                         }
                     }
                 }
+            }
+        }
+
+
+        FluidsRegistry.getFluidToProcess().forEach {
+            val ores = OreDictionary.getOres(it.oreName)
+            if (ores.isNotEmpty()) {
+                val ingot = OreDictionary.getOres(it.ingotName).firstOrNull() ?: return@forEach
+                arrayOf(FluidTemperature.COOL, FluidTemperature.HOT, FluidTemperature.SEARING)
+                    .map { temperature ->
+                        val fluid = FluidRegistry.getFluid("bcop-${it.fluidName}-${temperature.name.toLowerCase()}") ?: return@map
+                        this.registerSimpleRecipe(
+                            FluidStack(fluid, 1000),
+                            ingot.copyWithSize(temperature.baseIngots * it.multiplier),
+                            FluidStack(FluidsRegistry.GASEOUS_LAVA[3], temperature.baseResidue),
+                            40)
+                    }
             }
         }
     }

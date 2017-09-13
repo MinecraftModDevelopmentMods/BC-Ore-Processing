@@ -1,144 +1,117 @@
 package net.ndrei.bcoreprocessing.machines.fluidprocessor
 
 import buildcraft.api.mj.MjAPI
-import net.minecraft.item.EnumDyeColor
+import buildcraft.lib.net.IPayloadReceiver
+import buildcraft.lib.net.IPayloadWriter
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.EnumFacing
 import net.minecraftforge.common.util.Constants
+import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
-import net.minecraftforge.fluids.IFluidTank
-import net.minecraftforge.items.IItemHandler
+import net.ndrei.bcoreprocessing.lib.copyWithSize
 import net.ndrei.bcoreprocessing.lib.recipes.FluidProcessorRecipeManager
-import net.ndrei.bcoreprocessing.lib.render.FluidStacksTESR
-import net.ndrei.bcoreprocessing.lib.render.IFluidStacksHolder
-import net.ndrei.bcoreprocessing.lib.render.IItemStackHolder
-import net.ndrei.bcoreprocessing.lib.render.ItemStackTESR
-import net.ndrei.bcoreprocessing.machines.BaseMJMachine
-import net.ndrei.teslacorelib.inventory.BoundingRectangle
-import net.ndrei.teslacorelib.inventory.FluidTankType
-import net.ndrei.teslacorelib.utils.insertItems
+import net.ndrei.bcoreprocessing.machines.BaseOreProcessorMachine
 
 class FluidProcessorTile
-    : BaseMJMachine(FluidProcessorTile::class.java.name.hashCode()), IItemStackHolder, IFluidStacksHolder {
+    : BaseOreProcessorMachine() {
 
-    private lateinit var inputFluid: IFluidTank
-    private lateinit var residueTank: IFluidTank
-    private lateinit var outputs: IItemHandler
-
-    private var currentInput: FluidStack? = null
+    private var currentFluid: FluidStack? = null
     private var currentTick: Int = 0
 
-    //#region gui, storage & inventory
-
-    override fun getRenderers() = super.getRenderers().also {
-        it.add(ItemStackTESR)
-        it.add(FluidStacksTESR)
-    }
-
-    override fun canReceiveEnergyOnSide(side: EnumFacing?) =
-            (side != null) && EnumFacing.HORIZONTALS.contains(side)
-
-    override fun getItemStack() = ItemStack.EMPTY!!
-
-    override fun getFluidStacks() =
-            arrayOf(this.inputFluid, this.residueTank)
-                    .mapNotNull { it.fluid?.copy() }
-                    .toTypedArray()
-
-    override fun getTotalCapacity() = 15000
-
-    override fun initializeInventories() {
-        super.initializeInventories()
-
-        this.inputFluid = this.addSimpleFluidTank(9000, "Input Fluid", EnumDyeColor.BLUE,
-                43, 25, FluidTankType.INPUT, {
-            FluidProcessorRecipeManager.findFirstRecipe(it, true) != null
+    init {
+        super.registerSyncPart(STORAGE_CURRENT_FLUID, IPayloadWriter { buffer ->
+            val fluid = this.currentFluid
+            if ((fluid == null) || (fluid.amount == 0)) {
+                buffer.writeInt(0)
+            } else {
+                buffer.writeInt(fluid.amount)
+                buffer.writeString(fluid.fluid.name)
+            }
+        }, IPayloadReceiver { _, buffer ->
+            val fluidAmount = buffer.readInt()
+            this.currentFluid = if (fluidAmount > 0) {
+                val fluidName = buffer.readString()
+                FluidStack(FluidRegistry.getFluid(fluidName), fluidAmount)
+            } else null
+            null
         })
-        super.sideConfig.setSidesForColor(EnumDyeColor.BLUE, EnumFacing.HORIZONTALS.toList())
-
-        this.outputs = super.addSimpleInventory(3, "outputs", EnumDyeColor.PURPLE, "Output Inventory",
-                BoundingRectangle(97, 25, 18, 54),
-                { _, _ -> false }, { _, _ -> true }, false)
-        super.sideConfig.setSidesForColor(EnumDyeColor.PURPLE, listOf(EnumFacing.DOWN))
-
-        this.residueTank = this.addSimpleFluidTank(6000, "Residue Tank", EnumDyeColor.RED,
-                133, 25, FluidTankType.OUTPUT)
-        super.sideConfig.setSidesForColor(EnumDyeColor.RED, listOf(EnumFacing.UP))
     }
+
+    //#region storage & inventory
+
+    override fun canExtractItem(item: ItemStack) = true
+
+    override fun canFillFluidType(fluid: FluidStack) =
+        null != FluidProcessorRecipeManager.findFirstRecipe(fluid, true)
+
+    override fun getItemStack() =
+        (this.currentFluid ?: this.fluidTank.fluid)?.let {
+            FluidProcessorRecipeManager.findFirstRecipe(it, true)?.getRecipeOutput()?.first
+        } ?: this.itemHandler.getStackInSlot(0)
 
     override fun readFromNBT(compound: NBTTagCompound) {
         super.readFromNBT(compound)
 
-        if (compound.hasKey("current_fluid", Constants.NBT.TAG_COMPOUND)) {
-            this.currentInput = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("current_fluid"))
-            this.currentTick = compound.getInteger("current_tick")
-        }
+        this.currentTick = if (compound.hasKey("current_tick", Constants.NBT.TAG_COMPOUND)) {
+            compound.getInteger("current_tick")
+        } else 0
+        this.currentFluid = if (compound.hasKey(STORAGE_CURRENT_FLUID, Constants.NBT.TAG_COMPOUND)) {
+            FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(STORAGE_CURRENT_FLUID))
+        } else null
     }
 
     override fun writeToNBT(compound: NBTTagCompound) =
-            super.writeToNBT(compound).also {
-                if (this.currentInput != null) {
-                    it.setTag("current_fluid", this.currentInput!!.writeToNBT(NBTTagCompound()))
-                    it.setInteger("current_tick", this.currentTick)
-                }
+        super.writeToNBT(compound).also {
+            it.setInteger("current_tick", this.currentTick)
+            if (this.currentFluid != null) {
+               it.setTag(STORAGE_CURRENT_FLUID, this.currentFluid!!.writeToNBT(NBTTagCompound()))
             }
+        }
 
     //#endregion
 
     override fun innerUpdate() {
-        if (this.currentInput == null) {
-            // try to find a valid input
-            val fluid = this.inputFluid.fluid
-            if ((fluid != null) && (fluid.amount > 0)) {
-                val recipe = FluidProcessorRecipeManager.findFirstRecipe(fluid, false)
-                if (recipe != null) {
-                    this.currentInput = recipe.processInput(fluid)
-                    if (fluid.amount == 0) {
-                        // hack around tanks getting stuck on fluid types when amount == 0
-                        fluid.amount = 1
-                        this.inputFluid.drain(1, true)
-                    }
-                    this.currentTick = 0
-
-                    this.markDirty()
-                    this.forceSync()
-                }
-            }
-        }
-
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
-        if ((this.currentInput != null) && (this.battery.stored >= power)) {
-            val recipe = FluidProcessorRecipeManager.findFirstRecipe(this.currentInput!!, false) ?: return
-            val outputs = recipe.getOutputForTick(this.currentTick)
-            if (!outputs.first.isEmpty || (outputs.second != null)) {
-                val item = outputs.first
-                val f1ok = (item.isEmpty) || this.outputs.insertItems(item, true).isEmpty
+        val inputFluid = this.currentFluid ?: this.fluidTank.fluid
+        if ((inputFluid != null) && (inputFluid.amount > 0) && (this.battery.stored >= power) && this.itemHandler.getStackInSlot(0).isEmpty) {
+            val recipe = FluidProcessorRecipeManager.findFirstRecipe(inputFluid, true)
+            if (recipe != null) {
+                val outputs = recipe.getOutputForTick(this.currentTick)
+                val fluidAtTick = recipe.getInputForTick(this.currentTick)
 
                 val fluid = outputs.second
-                val f2ok = (fluid == null) || (fluid.amount == 0) || (this.residueTank.fill(fluid, false) == fluid.amount)
+                val f2ok = (fluid == null) || (fluid.amount == 0) || (this.residueTank.fillInternal(fluid, false) == fluid.amount)
 
-                if (!f1ok || !f2ok) {
-                    // something could not be processed, skip tick
-                    return
-                }
+                val drainOk = (fluidAtTick == null) || (fluidAtTick.amount == 0) || (this.fluidTank.drainInternal(fluidAtTick, false)?.amount == fluidAtTick.amount)
 
-                if (!item.isEmpty) {
-                    this.outputs.insertItems(item, false)
-                }
+                if (f2ok && drainOk) {
+                    if ((fluid != null) && (fluid.amount > 0)) {
+                        this.residueTank.fillInternal(fluid, true)
+                    }
 
-                if ((fluid != null) && (fluid.amount > 0)) {
-                    this.residueTank.fill(fluid, true)
+                    if ((fluidAtTick != null) && (fluidAtTick.amount > 0)) {
+                        this.fluidTank.drainInternal(fluidAtTick, true)
+                        if (this.currentFluid == null) {
+                            this.currentFluid = fluidAtTick.copyWithSize(1)
+                            this.markForUpdate(STORAGE_CURRENT_FLUID)
+                        }
+                    }
+
+                    this.currentTick++
+                    if (this.currentTick >= recipe.getProcessingTicks()) {
+                        this.currentTick = 0
+                        this.currentFluid = null
+                        this.markForUpdate(STORAGE_CURRENT_FLUID)
+                        this.itemHandler.setStackInSlot(0, recipe.getRecipeOutput().first)
+                    }
+
+                    this.battery.extractPower(power)
                 }
             }
-
-            this.currentTick++
-            if (this.currentTick >= recipe.getProcessingTicks()) {
-                this.currentInput = null
-                this.currentTick = 0
-            }
-
-            this.battery.extractPower(power)
         }
+    }
+
+    companion object {
+        protected const val STORAGE_CURRENT_FLUID = "current_fluid"
     }
 }

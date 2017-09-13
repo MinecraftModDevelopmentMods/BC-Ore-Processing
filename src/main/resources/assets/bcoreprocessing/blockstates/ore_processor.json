@@ -1,11 +1,16 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "bcoreprocessing:ore_processor"
+    "textures": {
+      "front": "bcoreprocessing:blocks/ore_processor_front_off"
+    },
+    "model": "bcoreprocessing:base_processor"
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}],
+    "inventory": [{
+      "model": "bcoreprocessing:base_processor_inv"
+    }],
     "facing": {
       "north": {},
       "south": {"y": 180},
@@ -13,6 +18,14 @@
       "east": {"y": 90},
       "up": {"x": -90},
       "down": {"x": 90}
+    },
+    "working": {
+      "true": {
+        "textures": {
+          "front": "bcoreprocessing:blocks/ore_processor_front_on"
+        }
+      },
+      "false": {}
     }
   }
 }

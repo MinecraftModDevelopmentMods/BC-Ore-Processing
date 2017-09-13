@@ -15,5 +15,3 @@ enum class GuiTextures(private val path: String) {
         screen.mc.textureManager.bindTexture(this.resourceLocation)
     }
 }
-
-fun GuiScreen.bindTexture(texture: GuiTextures) = texture.bind(this)
