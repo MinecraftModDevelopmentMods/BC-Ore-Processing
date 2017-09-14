@@ -1,4 +1,13 @@
 [
   { "name": "iron", "color": 11014674 },
-  { "name": "gold", "color": 16176649, "ore": "oreGold", "ingot": "ingotGold", "itemMultiplier": 1 }
+  { "name": "gold", "color": 16176649, "ore": "oreGold", "ingot": "ingotGold", "itemMultiplier": 1 },
+
+  { "name": "copper", "color": 16744213, "ore": "oreCopper", "ingot": "ingotCopper", "itemMultiplier": 1 },
+  { "name": "tin", "color": 13102335, "ore": "oreTin", "ingot": "ingotTin", "itemMultiplier": 1 },
+  { "name": "silver", "color": 15072511, "ore": "oreSilver", "ingot": "ingotSilver", "itemMultiplier": 1 },
+  { "name": "lead", "color": 9216994, "ore": "oreLead", "ingot": "ingotLead", "itemMultiplier": 1 },
+  { "name": "aluminum", "color": 16756884, "ore": "oreAluminum", "ingot": "ingotAluminum", "itemMultiplier": 1 },
+  { "name": "nickel", "color": 14803657, "ore": "oreNickel", "ingot": "ingotNickel", "itemMultiplier": 1 },
+  { "name": "platinum", "color": 4779263, "ore": "orePlatinum", "ingot": "ingotPlatinum", "itemMultiplier": 1 },
+  { "name": "iridium", "color": 13882081, "ore": "oreIridium", "ingot": "ingotIridium", "itemMultiplier": 1 }
 ]

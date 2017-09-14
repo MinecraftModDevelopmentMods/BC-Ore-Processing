@@ -54,7 +54,7 @@ object OreProcessorRecipeManager : IOreProcessorRecipeManager {
                 /*val ingot = */OreDictionary.getOres(it.ingotName).firstOrNull() ?: return@forEach
 
                 ores.forEach {
-                    this.registerSimpleRecipe(it, Pair(FluidStack(fluid, 1000), FluidStack(FluidsRegistry.GASEOUS_LAVA[3], 125)), 40)
+                    this.registerSimpleRecipe(it, Pair(FluidStack(fluid, 1000), FluidStack(FluidsRegistry.GASEOUS_LAVA[2], 125)), 40)
                 }
             }
         }
