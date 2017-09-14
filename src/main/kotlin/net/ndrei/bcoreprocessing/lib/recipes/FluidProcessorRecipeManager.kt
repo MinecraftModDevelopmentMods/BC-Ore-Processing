@@ -73,13 +73,13 @@ object FluidProcessorRecipeManager : IFluidProcessorRecipeManager {
             val ores = OreDictionary.getOres(it.oreName)
             if (ores.isNotEmpty()) {
                 val ingot = OreDictionary.getOres(it.ingotName).firstOrNull() ?: return@forEach
-                arrayOf(FluidTemperature.COOL, FluidTemperature.HOT, FluidTemperature.SEARING)
+                FluidTemperature.values().reversed()
                     .map { temperature ->
                         val fluid = FluidRegistry.getFluid("bcop-${it.fluidName}-${temperature.name.toLowerCase()}") ?: return@map
                         this.registerSimpleRecipe(
                             FluidStack(fluid, 1000),
                             ingot.copyWithSize(temperature.baseIngots * it.multiplier),
-                            FluidStack(FluidsRegistry.GASEOUS_LAVA[3], temperature.baseResidue),
+                            FluidStack(FluidsRegistry.GASEOUS_LAVA[2], temperature.baseResidue),
                             40)
                     }
             }

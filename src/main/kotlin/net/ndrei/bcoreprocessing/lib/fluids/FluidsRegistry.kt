@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.oredict.OreDictionary
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.MOD_ID
 
@@ -41,12 +42,24 @@ object FluidsRegistry {
             val viscosity = JsonUtils.getInt(it, "viscosity", 1000)
             val gaseous = JsonUtils.getBoolean(it, "gaseous", false)
 
-            registerFluid(name, color, luminosity, density, viscosity, gaseous)
-
             val ore = JsonUtils.getString(it, "ore", "")
             val ingot = JsonUtils.getString(it, "ingot", "")
+
+            var shouldRegister = true
             if (!ore.isNullOrBlank() && !ingot.isNullOrBlank()) {
-                this.processFluids.add(ProcessedFluidInfo(name, ore, ingot, JsonUtils.getInt(it, "itemMultiplier", 1)))
+                shouldRegister = false
+                val ores = OreDictionary.getOres(ore)
+                if (ores.isNotEmpty()) {
+                    val ingots = OreDictionary.getOres(ingot)
+                    if (ingots.isNotEmpty()) {
+                        this.processFluids.add(ProcessedFluidInfo(name, ore, ingot, JsonUtils.getInt(it, "itemMultiplier", 1)))
+                        shouldRegister = true
+                    }
+                }
+            }
+
+            if (shouldRegister) {
+                registerFluid(name, color, luminosity, density, viscosity, gaseous)
             }
         }
     }
