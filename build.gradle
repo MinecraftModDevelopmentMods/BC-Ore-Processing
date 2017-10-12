@@ -89,8 +89,8 @@ repositories {
     jcenter()
     maven { name='forgelin'; url='http://maven.shadowfacts.net' }
     maven { name='build craft'; url='https://www.mod-buildcraft.com/maven' }
-    maven { name='jei'; url="http://dvs1.progwml6.com/files/maven" }
-    mavenLocal()
+    maven { name='jei'; url='http://dvs1.progwml6.com/files/maven' }
+    maven { name 'craft tweaker'; url='http://maven.blamejared.com' }
 }
 
 dependencies {
