@@ -18,7 +18,7 @@ fun JsonObject.readFluidStack(memberName: String) =
     if (this.has(memberName)) JsonUtils.getJsonObject(this, memberName)?.readFluidStack() else null
 
 fun JsonObject.readFluidStack(): FluidStack? {
-    val fluid = JsonUtils.getString(this, "name", "")
+    val fluid = (if (JsonUtils.hasField(this, "name")) JsonUtils.getString(this, "name") else "")
             .let { FluidRegistry.getFluid(it) } ?: return null
     val amount = JsonUtils.getInt(this, "quantity", 0)
 
@@ -29,7 +29,7 @@ fun JsonObject.readItemStacks(memberName: String): List<ItemStack> =
     if (this.has(memberName)) JsonUtils.getJsonObject(this, memberName).readItemStacks() else listOf()
 
 fun JsonObject.readItemStacks(): List<ItemStack> {
-    val item = JsonUtils.getString(this, "name", "")
+    val item = (if (JsonUtils.hasField(this, "name")) JsonUtils.getString(this, "name") else "")
             .let {
                 val registryName = if (it.isNullOrEmpty()) null else ResourceLocation(it)
                 if ((registryName != null) && Item.REGISTRY.containsKey(registryName))
@@ -42,7 +42,7 @@ fun JsonObject.readItemStacks(): List<ItemStack> {
         return listOf(ItemStack(item, amount, meta))
     }
     else {
-        val ore = JsonUtils.getString(this, "ore", "")
+        val ore = if (JsonUtils.hasField(this, "ore")) JsonUtils.getString(this, "ore") else ""
         if (!ore.isNullOrEmpty()) {
             val amount = JsonUtils.getInt(this, "quantity", 1)
             return OreDictionary.getOres(ore)

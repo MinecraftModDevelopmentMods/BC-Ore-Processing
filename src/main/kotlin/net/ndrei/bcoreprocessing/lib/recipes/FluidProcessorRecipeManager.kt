@@ -46,7 +46,7 @@ object FluidProcessorRecipeManager : IFluidProcessorRecipeManager {
                     if (rawVariants.isJsonArray) {
                         rawVariants.asJsonArray.forEach {
                             if (!it.isJsonObject) return@forEach
-                            val rawTemperature = JsonUtils.getString(it.asJsonObject, "temperature", "")
+                            val rawTemperature = JsonUtils.getString(it.asJsonObject, "temperature") ?: ""
                             val newTemperature = (if (rawTemperature.isNullOrBlank()) null else FluidTemperature.values().firstOrNull {
                                 rawTemperature.equals(it.name, true)
                             }) ?: return@forEach

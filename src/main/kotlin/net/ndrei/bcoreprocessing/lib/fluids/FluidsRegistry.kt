@@ -9,6 +9,8 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
 import net.minecraftforge.oredict.OreDictionary
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.MOD_ID
@@ -35,18 +37,28 @@ object FluidsRegistry {
         }
 
         BCOreProcessing.configHelper.readExtraRecipesFile("fluids") {
-            val name = JsonUtils.getString(it, "name", null) ?: return@readExtraRecipesFile
+            val name = JsonUtils.getString(it, "name") ?: return@readExtraRecipesFile
             val color = JsonUtils.getInt(it, "color", 0)
             val luminosity = JsonUtils.getInt(it, "luminosity", 0)
             val density = JsonUtils.getInt(it, "density", 1000)
             val viscosity = JsonUtils.getInt(it, "viscosity", 1000)
             val gaseous = JsonUtils.getBoolean(it, "gaseous", false)
 
-            val ore = JsonUtils.getString(it, "ore", "")
-            val ingot = JsonUtils.getString(it, "ingot", "")
+            val default = JsonUtils.getBoolean(it, "default", false)
+
+            val ore = when {
+                JsonUtils.hasField(it,"ore") -> JsonUtils.getString(it, "ore")
+                default -> "ore${name.capitalize()}"
+                else -> ""
+            }
+            val ingot = when {
+                JsonUtils.hasField(it, "ingot") -> JsonUtils.getString(it, "ingot")
+                default ->"ingot${name.capitalize()}"
+                else -> ""
+            }
 
             var shouldRegister = true
-            if (!ore.isNullOrBlank() && !ingot.isNullOrBlank()) {
+            if (ore.isNotEmpty() && ingot.isNotEmpty()) {
                 shouldRegister = false
                 val ores = OreDictionary.getOres(ore)
                 if (ores.isNotEmpty()) {
@@ -65,6 +77,7 @@ object FluidsRegistry {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     fun onTextureStitch(ev: TextureStitchEvent) {
         // TODO: find out why this is needed in order to correctly render this mod's fluids... :S
         ev.map.registerSprite(ResourceLocation(MOD_ID, "blocks/base_fluid_still"))
