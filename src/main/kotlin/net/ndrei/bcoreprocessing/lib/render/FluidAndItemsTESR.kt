@@ -4,12 +4,12 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
 
 object FluidAndItemsTESR : TileEntitySpecialRenderer<TileEntity>() {
-    override fun render(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int, alpha: Float) {
+    override fun renderTileEntityAt(te: TileEntity?, x: Double, y: Double, z: Double, partialTicks: Float, destroyStage: Int) {
         arrayOf(ItemStackTESR, FluidStacksTESR).forEach {
             it.setRendererDispatcher(this.rendererDispatcher)
-            it.render(te, x, y, z, partialTicks, destroyStage, alpha)
+            it.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage)
         }
 
-        super.render(te, x, y, z, partialTicks, destroyStage, alpha)
+        super.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage)
     }
 }

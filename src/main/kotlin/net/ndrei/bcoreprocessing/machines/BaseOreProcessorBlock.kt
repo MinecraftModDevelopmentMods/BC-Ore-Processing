@@ -21,7 +21,6 @@ import net.minecraftforge.fml.client.registry.ClientRegistry
 import net.minecraftforge.fml.common.registry.GameRegistry
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import net.minecraftforge.registries.IForgeRegistry
 import net.ndrei.bcoreprocessing.BCOreProcessing
 import net.ndrei.bcoreprocessing.MOD_ID
 import net.ndrei.bcoreprocessing.lib.render.FluidAndItemsTESR
@@ -42,15 +41,15 @@ abstract class BaseOreProcessorBlock<T : BaseOreProcessorMachine>(registryName: 
             .withProperty(WORKING, false)
     }
 
-    fun registerBlock(registry: IForgeRegistry<Block>) {
-        registry.register(this)
+    fun registerBlock(/*registry: IForgeRegistry<Block>*/) {
+        GameRegistry.register(this)
         GameRegistry.registerTileEntity(this.teClass, this.registryName!!.toString() + "_tile")
     }
 
-    fun registerItem(registry: IForgeRegistry<Item>) {
+    fun registerItem(/*registry: IForgeRegistry<Item>*/) {
         val item = ItemBlock(this)
         item.registryName = this.registryName
-        registry.register(item)
+        GameRegistry.register(item)
     }
 
     @SideOnly(Side.CLIENT)
@@ -61,6 +60,8 @@ abstract class BaseOreProcessorBlock<T : BaseOreProcessorMachine>(registryName: 
 
         ClientRegistry.bindTileEntitySpecialRenderer(this.teClass, FluidAndItemsTESR)
     }
+
+    abstract fun registerRecipe()
 
     override fun createNewTileEntity(worldIn: World?, meta: Int): TileEntity? {
         return try {
