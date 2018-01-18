@@ -4,6 +4,7 @@ import buildcraft.api.mj.IMjConnector
 import buildcraft.api.mj.IMjReceiver
 import buildcraft.api.mj.MjAPI
 import buildcraft.api.mj.MjBattery
+import buildcraft.api.tiles.IDebuggable
 import buildcraft.lib.misc.MessageUtil
 import buildcraft.lib.net.IPayloadReceiver
 import buildcraft.lib.net.IPayloadWriter
@@ -34,7 +35,7 @@ import net.ndrei.bcoreprocessing.lib.render.IItemStackHolder
 import net.ndrei.bcoreprocessing.lib.serialize
 
 abstract class BaseOreProcessorMachine
-    : TileEntity(), ITickable, IItemStackHolder, IFluidStacksHolder, IPayloadReceiver {
+    : TileEntity(), ITickable, IItemStackHolder, IFluidStacksHolder, IPayloadReceiver, IDebuggable {
 
     protected val battery = object: MjBattery(MjAPI.ONE_MINECRAFT_JOULE * 1024) {
         private var lastPower = -1L
@@ -357,5 +358,14 @@ abstract class BaseOreProcessorMachine
         private const val STORAGE_RESIDUE_TANK = "residue_Tank"
         private const val STORAGE_ITEM_STACK = "item_handler"
         private const val STORAGE_BATTERY = "mj_battery"
+    }
+
+    private fun FluidStack.describe(): String  = "${this.amount} x ${this.fluid.name}"
+    private fun ItemStack.describe(): String  = this.displayName
+
+    override fun getDebugInfo(left: MutableList<String>, right: MutableList<String>, side: EnumFacing) {
+        right.add("Fluid: ${this.fluidTank.fluid?.describe() ?: "no fluid"}.")
+        right.add("Residue: ${this.residueTank.fluid?.describe() ?: "no fluid"}.")
+        right.add("Item: ${this.itemHandler.getStackInSlot(0).describe()}.")
     }
 }
