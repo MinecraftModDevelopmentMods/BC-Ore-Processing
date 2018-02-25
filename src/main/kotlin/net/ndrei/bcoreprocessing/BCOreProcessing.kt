@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger
 @Mod(modid = MOD_ID, version = MOD_VERSION, name = MOD_NAME,
     acceptedMinecraftVersions = MOD_MC_VERSION,
     dependencies = MOD_DEPENDENCIES,
+    certificateFingerprint = MOD_SIGN_FINGERPRINT,
     useMetadata = true, modLanguage = "kotlin", modLanguageAdapter = "net.shadowfacts.forgelin.KotlinAdapter")
 object BCOreProcessing {
     @SidedProxy(clientSide = "net.ndrei.bcoreprocessing.ClientProxy", serverSide = "net.ndrei.bcoreprocessing.ServerProxy")
