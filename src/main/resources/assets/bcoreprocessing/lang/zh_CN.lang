@@ -1,0 +1,4 @@
+itemGroup.BC Ore Processing=BC 矿物处理
+
+tile.bcoreprocessing.ore_processor.name=矿物处理机
+tile.bcoreprocessing.fluid_processor.name=熔融矿物处理机
