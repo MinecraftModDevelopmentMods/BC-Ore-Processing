@@ -272,8 +272,8 @@ publishing {
 }
 
 curseforge {
-    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') &&
-            ((project.cf_release_type == "alpha") || (project.cf_release_type == "beta") || (project.cf_release_type == "release"))) {
+//    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') &&
+//            ((project.cf_release_type == "alpha") || (project.cf_release_type == "beta") || (project.cf_release_type == "release"))) {
         apiKey = secret.curseforgeAPIKey
         project {
             id = "$project.cf_project_id"
@@ -285,13 +285,13 @@ curseforge {
             if (System.getenv().BUILD_NUMBER) {
                 displayVersion += '.' + System.getenv().BUILD_NUMBER
             }
+            relations {
+                requiredDependency 'shadowfacts-forgelin'
+                requiredDependency 'buildcraft'
+                // TODO: add relations ('requiredLibrary' || 'optionalLibrary')
+            }
             mainArtifact(jar) {
                 displayName = "$projectName : $displayVersion"
-                relations {
-                    requiredDependency 'shadowfacts-forgelin'
-                    requiredDependency 'buildcraft'
-                    // TODO: add relations ('requiredLibrary' || 'optionalLibrary')
-                }
             }
             addArtifact(sourceJar) {
                 displayName = "$projectName : $displayVersion : Sources"
@@ -306,5 +306,8 @@ curseforge {
                 displayName = "$projectName : $displayVersion : API Javadoc"
             }
         }
-    }
+        options {
+            debug = true // defaults to false
+        }
+//    }
 }
