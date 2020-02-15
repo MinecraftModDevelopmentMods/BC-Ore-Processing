@@ -21,7 +21,7 @@ pipeline {
         stage("Build") {
             steps {
                 sh """set -x
-                      ./gradlew --info --scan build curseforge
+                      ./gradlew --info --scan curseforge
                    """
 
                 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, onlyIfSuccessful: true
