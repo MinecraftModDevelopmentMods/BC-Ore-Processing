@@ -13,7 +13,6 @@ pipeline {
             steps {
                 sh """set -x
                       chmod 755 gradlew
-                      ./gradlew clean setupCIWorkspace
                    """
             }
         }
@@ -21,24 +20,24 @@ pipeline {
         stage("Build") {
             steps {
                 sh """set -x
-                      ./gradlew --info --scan curseforge
+                      ./gradlew curseforge
                    """
 
                 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true, onlyIfSuccessful: true
             }
         }
 
-        stage("Maven") {
-            when {
-                expression {
-                    return !env.BRANCH_NAME.startsWith('PR-')
-                }
-            }
-            steps {
-                sh """set -x
-                      ./gradlew uploadArchives
-                   """
-            }
-        }
+//        stage("Maven") {
+//            when {
+//                expression {
+//                    return !env.BRANCH_NAME.startsWith('PR-')
+//                }
+//            }
+//            steps {
+//                sh """set -x
+//                      ./gradlew uploadArchives
+//                   """
+//            }
+//        }
     }
 }
