@@ -3,7 +3,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url = "http://files.minecraftforge.net/maven" }
-        maven { url = "http://repo.maven.apache.org/maven2" }
+        maven { url = "https://repo.maven.apache.org/maven2" }
         maven { url = "https://plugins.gradle.org/m2/" }
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
@@ -154,7 +154,7 @@ dependencies {
 
     compileOnly "com.mod-buildcraft:buildcraft-api:${project.bc_version}"
     compileOnly "com.mod-buildcraft:buildcraft-lib:${project.bc_version}"
-    runtime "com.mod-buildcraft:buildcraft:${project.bc_version}"
+    runtime "com.mod-buildcraft:buildcraft-all:${project.bc_version}"
 }
 
 processResources {

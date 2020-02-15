@@ -9,12 +9,15 @@ import net.minecraft.block.state.BlockStateContainer
 import net.minecraft.block.state.IBlockState
 import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.BlockRenderLayer
 import net.minecraft.util.EnumFacing
+import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
 import net.minecraftforge.client.model.ModelLoader
 import net.minecraftforge.fml.client.registry.ClientRegistry
@@ -81,9 +84,10 @@ abstract class BaseOreProcessorBlock<T : BaseOreProcessorMachine>(registryName: 
         }
     }
 
-    override fun getBlockLayer() = BlockRenderLayer.TRANSLUCENT
+    override fun getBlockLayer() = BlockRenderLayer.CUTOUT
     override fun isOpaqueCube(state: IBlockState?) = false
     override fun isFullCube(state: IBlockState) = false
+    override fun shouldSideBeRendered(blockState: IBlockState, blockAccess: IBlockAccess, pos: BlockPos, side: EnumFacing): Boolean = true
 
     override fun getStateForPlacement(worldIn: World, pos: BlockPos, facing: EnumFacing, hitX: Float, hitY: Float, hitZ: Float, meta: Int, placer: EntityLivingBase): IBlockState {
         return this.defaultState.withProperty(FACING, placer.horizontalFacing.opposite)

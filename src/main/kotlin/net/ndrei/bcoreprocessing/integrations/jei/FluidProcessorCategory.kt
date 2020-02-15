@@ -53,7 +53,7 @@ object FluidProcessorCategory
             val output = recipe.getRecipeOutput()
             ingredients.setOutput(ItemStack::class.java, output.first)
             if (output.second != null) {
-                ingredients.setOutput(FluidStack::class.java, output.second)
+                ingredients.setOutput(FluidStack::class.java, output.second!!)
             }
         }
     }

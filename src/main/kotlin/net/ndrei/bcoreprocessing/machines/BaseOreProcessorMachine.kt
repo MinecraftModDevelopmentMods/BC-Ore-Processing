@@ -140,6 +140,13 @@ abstract class BaseOreProcessorMachine
             this.itemHandler.deserializeNBT(buffer.readCompoundTag())
             null
         })
+
+        registerSyncPart(STORAGE_BATTERY, IPayloadWriter {
+            buffer -> buffer.writeCompoundTag(this.battery.serializeNBT())
+        }, IPayloadReceiver { _, buffer ->
+            this.battery.deserializeNBT(buffer.readCompoundTag())
+            null
+        })
     }
 
     //#region fluid / inventory      methods
@@ -338,7 +345,7 @@ abstract class BaseOreProcessorMachine
 
     //#endregion
 
-    override final fun update() {
+    final override fun update() {
         this.innerUpdate()
 
         if (this.getWorld().isRemote) {
@@ -364,6 +371,7 @@ abstract class BaseOreProcessorMachine
     private fun ItemStack.describe(): String  = this.displayName
 
     override fun getDebugInfo(left: MutableList<String>, right: MutableList<String>, side: EnumFacing) {
+        right.add("Battery: ${this.battery.debugString}.")
         right.add("Fluid: ${this.fluidTank.fluid?.describe() ?: "no fluid"}.")
         right.add("Residue: ${this.residueTank.fluid?.describe() ?: "no fluid"}.")
         right.add("Item: ${this.itemHandler.getStackInSlot(0).describe()}.")
