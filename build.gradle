@@ -286,24 +286,24 @@ curseforge {
                 displayVersion += '.' + System.getenv().BUILD_NUMBER
             }
             mainArtifact(jar) {
-                displayName = "$project.mod_name : $displayVersion"
+                displayName = "$projectName : $displayVersion"
                 relations {
-                    requiredLibrary 'shadowfacts-forgelin'
-                    requiredLibrary 'buildcraft'
+                    requiredDependency 'shadowfacts-forgelin'
+                    requiredDependency 'buildcraft'
                     // TODO: add relations ('requiredLibrary' || 'optionalLibrary')
                 }
             }
             addArtifact(sourceJar) {
-                displayName = "$project.mod_name : $displayVersion : Sources"
+                displayName = "$projectName : $displayVersion : Sources"
             }
             addArtifact(deobfJar) {
-                displayName = "$project.mod_name : $displayVersion : Development"
+                displayName = "$projectName : $displayVersion : Development"
             }
             addArtifact(apiJar) {
-                displayName = "$project.mod_name : $displayVersion : API"
+                displayName = "$projectName : $displayVersion : API"
             }
             addArtifact(javadocJar) {
-                displayName = "$project.mod_name : $displayVersion : API Javadoc"
+                displayName = "$projectName : $displayVersion : API Javadoc"
             }
         }
     }
