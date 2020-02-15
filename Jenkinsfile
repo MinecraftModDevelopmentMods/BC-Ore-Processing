@@ -40,5 +40,18 @@ pipeline {
                    """
             }
         }
+
+        stage("CurseForge") {
+            when {
+                expression {
+                    return !env.BRANCH_NAME.startsWith('PR-')
+                }
+            }
+            steps {
+                sh """set -x
+                      ./gradlew curseforge
+                   """
+            }
+        }
     }
 }

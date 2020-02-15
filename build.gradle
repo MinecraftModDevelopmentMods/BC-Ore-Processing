@@ -272,8 +272,8 @@ publishing {
 }
 
 curseforge {
-//    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') &&
-//            ((project.cf_release_type == "alpha") || (project.cf_release_type == "beta") || (project.cf_release_type == "release"))) {
+    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') &&
+            ((project.cf_release_type == "alpha") || (project.cf_release_type == "beta") || (project.cf_release_type == "release"))) {
         apiKey = secret.curseforgeAPIKey
         project {
             id = "$project.cf_project_id"
@@ -309,5 +309,5 @@ curseforge {
         options {
             debug = true // defaults to false
         }
-//    }
+    }
 }
