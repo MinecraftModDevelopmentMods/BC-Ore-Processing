@@ -72,6 +72,15 @@ class FluidProcessorTile
 
     override fun innerUpdate() {
         val power = 6 * MjAPI.ONE_MINECRAFT_JOULE
+
+	val cf = this.currentFluid
+	val nf = this.fluidTank.fluid
+	if (cf != null && nf != null) {
+	  if (cf.amount == 1 && cf.getFluid() != nf.getFluid()) {
+	    this.currentFluid = null
+	  }
+	}
+	
         val inputFluid = this.currentFluid ?: this.fluidTank.fluid
         if ((inputFluid != null) && (inputFluid.amount > 0) && (this.battery.stored >= power) && this.itemHandler.getStackInSlot(0).isEmpty) {
             val recipe = FluidProcessorRecipeManager.findFirstRecipe(inputFluid, true)
